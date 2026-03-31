@@ -5,6 +5,17 @@
     "icon": "icon.png",
     "version": "1.0.13",
     "mcpName": "io.github.cafeTechne/antigravity-link",
+    "files": [
+        "out/**",
+        "public/**",
+        "mcp-server.mjs",
+        "openapi.yaml",
+        "icon.png",
+        "README.md",
+        "LICENSE",
+        "CHANGELOG.md",
+        "package.nls*.json"
+    ],
     "license": "MIT",
     "engines": {
         "vscode": "^1.90.0"
