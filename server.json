@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.cafetechne/antigravity-link",
+  "name": "io.github.cafeTechne/antigravity-link",
   "title": "Antigravity Link",
   "description": "MCP server and OpenAPI-backed mobile companion for controlling Antigravity IDE sessions",
   "repository": {
