@@ -37,9 +37,9 @@
 
 ---
 
-You're running an Antigravity session and need to step away from your desk. The AI is mid-generation. You want to monitor it, redirect it, upload a file, or just read what it wrote — from your phone, without coming back to your computer.
+You're running an Antigravity session and need to step away from your desk. The AI is mid-generation. You want to monitor it, redirect it, upload a file, or just read what it wrote from your phone, without coming back to your computer.
 
-Antigravity Link makes that possible. Scan a QR code and your phone becomes a live mirror of the active chat: read responses as they stream, send messages, stop generation, upload files, dictate via voice, and switch between multiple Antigravity windows — all from a mobile browser, on your local network.
+Antigravity Link makes that possible. Scan a QR code and your phone becomes a live mirror of the active chat: read responses as they stream, send messages, stop generation, upload files, dictate via voice, and switch between multiple Antigravity windows all from a mobile browser, on your local network.
 
 For automation, the extension also exposes a local HTTP API and an MCP server so agents and external tools can drive Antigravity sessions programmatically.
 
@@ -72,7 +72,7 @@ https://github.com/user-attachments/assets/43c7d029-a598-474f-949e-5da333c9a3f2
 
 ## Installation
 
-Install from the Antigravity extensions marketplace — search **Antigravity Link** — or [install directly from Open VSX](https://open-vsx.org/extension/cafetechne/antigravity-link-extension).
+Install from the Antigravity extensions marketplace: search **Antigravity Link** or [install directly from Open VSX](https://open-vsx.org/extension/cafetechne/antigravity-link-extension).
 
 ## Prerequisites
 
@@ -176,11 +176,11 @@ Replace `<extension-dir>` with the path to the installed extension:
 
 Antigravity Link has no known ban cases and is designed to stay that way.
 
-The extension works by connecting to a debug port that Antigravity exposes on your own machine — the same Chrome DevTools Protocol used by VS Code's built-in debugger and browser devtools. It reads your local UI and simulates keypresses and clicks, exactly as if you were sitting at your keyboard.
+The extension works by connecting to a debug port that Antigravity exposes on your own machine the same Chrome DevTools Protocol used by VS Code's built-in debugger and browser devtools. It reads your local UI and simulates keypresses and clicks, exactly as if you were sitting at your keyboard.
 
 What this means in practice:
 - **No requests are made to Google's servers** beyond what Antigravity already sends. The extension has no network access outside your LAN.
-- **Nothing is injected into Antigravity's network traffic.** The extension reads your screen and types into your editor — it does not intercept or modify API calls.
+- **Nothing is injected into Antigravity's network traffic.** The extension reads your screen and types into your editor it does not intercept or modify API calls.
 - **No Antigravity files are modified.** There are no patches, hooks, or binary modifications.
 - **The server runs entirely on your machine.** Your prompts, chat history, and files never leave your local network unless you explicitly expose the server externally.
 - **No data is sent to third-party services** by this extension.
@@ -197,10 +197,10 @@ The source code is MIT-licensed and fully auditable: https://github.com/cafeTech
 ## FAQ
 
 **Does this work on iOS and Android?**
-Yes. The mobile UI runs in any modern mobile browser — Safari on iOS, Chrome on Android, and others all work.
+Yes. The mobile UI runs in any modern mobile browser Safari on iOS, Chrome on Android, and others all work.
 
 **Does this work over cellular or VPN?**
-Not by default — the server is LAN-only. For remote access you would need to expose it through a tunnel such as ngrok. The token authentication and HTTPS remain in place regardless.
+Not by default: the server is LAN-only. For remote access you would need to expose it through a tunnel such as ngrok, wireguard, etc.. The token authentication and HTTPS remain in place regardless.
 
 **Is the self-signed certificate warning safe to accept?**
 Yes. The certificate is generated locally on your machine at server start. The warning appears because it is not issued by a public certificate authority, not because the connection is insecure.
