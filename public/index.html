@@ -2702,21 +2702,45 @@
             if (!target || !(target instanceof Element)) return;
             if (target.id === 'snapshotHost') return;
 
-            // Detect if the click target or any ancestor contains a filename with a standard extension
-            let curr = target;
-            let fileToPreview = null;
-            while (curr && curr !== chatContent && curr.id !== 'snapshotHost') {
-                const text = (curr.innerText || curr.textContent || '').trim();
-                const match = text.match(/\b([\w/.-]+\.(ts|js|json|css|html|md|py|go|rs|c|cpp|h|yml|yaml|sh|txt))\b/i);
-                if (match) {
-                    fileToPreview = match[1];
+            // First check if the clicked target (or any ancestor) is an interactive element (button, link, tab, clickable, etc.)
+            let currInt = target;
+            let isInteractive = false;
+            while (currInt && currInt !== chatContent && currInt.id !== 'snapshotHost') {
+                const tag = currInt.tagName.toLowerCase();
+                const cls = (currInt.className || '').toString().toLowerCase();
+                const role = currInt.getAttribute('role') || '';
+                if (tag === 'button' || tag === 'a' || role === 'button' || cls.includes('button') || cls.includes('clickable') || cls.includes('action')) {
+                    isInteractive = true;
                     break;
                 }
-                if (curr.parentElement) {
-                    curr = curr.parentElement;
+                if (currInt.parentElement) {
+                    currInt = currInt.parentElement;
                 } else {
-                    const rootNode = curr.getRootNode ? curr.getRootNode() : null;
-                    curr = rootNode instanceof ShadowRoot ? rootNode.host : null;
+                    const rootNode = currInt.getRootNode ? currInt.getRootNode() : null;
+                    currInt = rootNode instanceof ShadowRoot ? rootNode.host : null;
+                }
+            }
+
+            // Only check for file previews if the click was NOT on an interactive button/link!
+            let fileToPreview = null;
+            if (!isInteractive) {
+                let curr = target;
+                while (curr && curr !== chatContent && curr.id !== 'snapshotHost') {
+                    const text = (curr.innerText || curr.textContent || '').trim();
+                    // Make sure the text length is short (under 80 chars) to ensure we're matching the filename itself, not a large parent block!
+                    if (text.length < 80) {
+                        const match = text.match(/\b([\w/.-]+\.(ts|js|json|css|html|md|py|go|rs|c|cpp|h|yml|yaml|sh|txt))\b/i);
+                        if (match) {
+                            fileToPreview = match[1];
+                            break;
+                        }
+                    }
+                    if (curr.parentElement) {
+                        curr = curr.parentElement;
+                    } else {
+                        const rootNode = curr.getRootNode ? curr.getRootNode() : null;
+                        curr = rootNode instanceof ShadowRoot ? rootNode.host : null;
+                    }
                 }
             }
 

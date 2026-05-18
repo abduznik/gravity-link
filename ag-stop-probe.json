@@ -1,11 +1,11 @@
 {
-  "ts": "2026-05-18T16:37:20.866Z",
+  "ts": "2026-05-18T19:03:48.779Z",
   "source": "auto-on-generation-start",
   "contexts": [
     {
       "ctxId": "main",
       "frameUrl": "vscode-file://vscode-app/Applications/Antigravity.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html",
-      "totalBtns": 113,
+      "totalBtns": 139,
       "inputBoxFound": true,
       "inputBoxBtns": [
         {
@@ -422,7 +422,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 72,
+            "x": 53,
             "y": 40,
             "w": 20,
             "h": 20
@@ -438,7 +438,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 249,
+            "x": 230,
             "y": 40,
             "w": 20,
             "h": 20
@@ -454,7 +454,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 369,
+            "x": 350,
             "y": 40,
             "w": 20,
             "h": 20
@@ -470,7 +470,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 511,
+            "x": 492,
             "y": 40,
             "w": 20,
             "h": 20
@@ -486,7 +486,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 631,
+            "x": 612,
             "y": 40,
             "w": 20,
             "h": 20
@@ -502,7 +502,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 802,
+            "x": 753,
             "y": 40,
             "w": 20,
             "h": 20
@@ -518,7 +518,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 941,
+            "x": 877,
             "y": 40,
             "w": 20,
             "h": 20
@@ -534,7 +534,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 1094,
+            "x": 1058,
             "y": 40,
             "w": 20,
             "h": 20
@@ -550,7 +550,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 1223,
+            "x": 1200,
             "y": 40,
             "w": 20,
             "h": 20
@@ -566,26 +566,74 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 1357,
+            "x": 1320,
             "y": 40,
             "w": 20,
             "h": 20
           }
         },
         {
-          "aria": "Open Changes",
+          "aria": "Close (⌘W)",
           "title": "",
-          "cls": "action-label codicon codicon-compare-changes",
+          "cls": "action-label codicon codicon-close",
           "text": "",
           "innerHTML": "",
           "hasSvg": false,
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 970,
-            "y": 39,
-            "w": 22,
-            "h": 22
+            "x": 1449,
+            "y": 40,
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "aria": "Close (⌘W)",
+          "title": "",
+          "cls": "action-label codicon codicon-close",
+          "text": "",
+          "innerHTML": "",
+          "hasSvg": false,
+          "dataAttrs": {},
+          "visible": true,
+          "rect": {
+            "x": 1586,
+            "y": 40,
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "aria": "Close (⌘W)",
+          "title": "",
+          "cls": "action-label codicon codicon-close",
+          "text": "",
+          "innerHTML": "",
+          "hasSvg": false,
+          "dataAttrs": {},
+          "visible": true,
+          "rect": {
+            "x": 1706,
+            "y": 40,
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "aria": "Close (⌘W)",
+          "title": "",
+          "cls": "action-label codicon codicon-close",
+          "text": "",
+          "innerHTML": "",
+          "hasSvg": false,
+          "dataAttrs": {},
+          "visible": true,
+          "rect": {
+            "x": 1840,
+            "y": 40,
+            "w": 20,
+            "h": 20
           }
         },
         {
@@ -658,54 +706,6 @@
           "cls": "diff-hunk-button accept",
           "text": "Accept⌥⏎",
           "innerHTML": "Accept<span class=\"shortcut-label\">⌥⏎</span>",
-          "hasSvg": false,
-          "dataAttrs": {},
-          "visible": true,
-          "rect": {
-            "x": 806,
-            "y": 236,
-            "w": 84,
-            "h": 20
-          }
-        },
-        {
-          "aria": "",
-          "title": "",
-          "cls": "diff-hunk-button reject",
-          "text": "Reject⇧⌥⌫",
-          "innerHTML": "Reject<span class=\"shortcut-label\">⇧⌥⌫</span>",
-          "hasSvg": false,
-          "dataAttrs": {},
-          "visible": true,
-          "rect": {
-            "x": 892,
-            "y": 236,
-            "w": 83,
-            "h": 20
-          }
-        },
-        {
-          "aria": "",
-          "title": "",
-          "cls": "diff-hunk-button accept",
-          "text": "Accept",
-          "innerHTML": "Accept",
-          "hasSvg": false,
-          "dataAttrs": {},
-          "visible": false,
-          "rect": {
-            "x": 0,
-            "y": 0,
-            "w": 0,
-            "h": 0
-          }
-        },
-        {
-          "aria": "",
-          "title": "",
-          "cls": "diff-hunk-button reject",
-          "text": "Reject",
-          "innerHTML": "Reject",
           "hasSvg": false,
           "dataAttrs": {},
           "visible": false,
@@ -721,7 +721,7 @@
     {
       "ctxId": 17,
       "frameUrl": "vscode-file://vscode-app/Applications/Antigravity.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html",
-      "totalBtns": 113,
+      "totalBtns": 139,
       "inputBoxFound": true,
       "inputBoxBtns": [
         {
@@ -1138,7 +1138,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 72,
+            "x": 53,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1154,7 +1154,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 249,
+            "x": 230,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1170,7 +1170,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 369,
+            "x": 350,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1186,7 +1186,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 511,
+            "x": 492,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1202,7 +1202,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 631,
+            "x": 612,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1218,7 +1218,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 802,
+            "x": 753,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1234,7 +1234,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 941,
+            "x": 877,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1250,7 +1250,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 1094,
+            "x": 1058,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1266,7 +1266,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 1223,
+            "x": 1200,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1282,26 +1282,74 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 1357,
+            "x": 1320,
             "y": 40,
             "w": 20,
             "h": 20
           }
         },
         {
-          "aria": "Open Changes",
+          "aria": "Close (⌘W)",
           "title": "",
-          "cls": "action-label codicon codicon-compare-changes",
+          "cls": "action-label codicon codicon-close",
           "text": "",
           "innerHTML": "",
           "hasSvg": false,
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 970,
-            "y": 39,
-            "w": 22,
-            "h": 22
+            "x": 1449,
+            "y": 40,
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "aria": "Close (⌘W)",
+          "title": "",
+          "cls": "action-label codicon codicon-close",
+          "text": "",
+          "innerHTML": "",
+          "hasSvg": false,
+          "dataAttrs": {},
+          "visible": true,
+          "rect": {
+            "x": 1586,
+            "y": 40,
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "aria": "Close (⌘W)",
+          "title": "",
+          "cls": "action-label codicon codicon-close",
+          "text": "",
+          "innerHTML": "",
+          "hasSvg": false,
+          "dataAttrs": {},
+          "visible": true,
+          "rect": {
+            "x": 1706,
+            "y": 40,
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "aria": "Close (⌘W)",
+          "title": "",
+          "cls": "action-label codicon codicon-close",
+          "text": "",
+          "innerHTML": "",
+          "hasSvg": false,
+          "dataAttrs": {},
+          "visible": true,
+          "rect": {
+            "x": 1840,
+            "y": 40,
+            "w": 20,
+            "h": 20
           }
         },
         {
@@ -1374,54 +1422,6 @@
           "cls": "diff-hunk-button accept",
           "text": "Accept⌥⏎",
           "innerHTML": "Accept<span class=\"shortcut-label\">⌥⏎</span>",
-          "hasSvg": false,
-          "dataAttrs": {},
-          "visible": true,
-          "rect": {
-            "x": 806,
-            "y": 236,
-            "w": 84,
-            "h": 20
-          }
-        },
-        {
-          "aria": "",
-          "title": "",
-          "cls": "diff-hunk-button reject",
-          "text": "Reject⇧⌥⌫",
-          "innerHTML": "Reject<span class=\"shortcut-label\">⇧⌥⌫</span>",
-          "hasSvg": false,
-          "dataAttrs": {},
-          "visible": true,
-          "rect": {
-            "x": 892,
-            "y": 236,
-            "w": 83,
-            "h": 20
-          }
-        },
-        {
-          "aria": "",
-          "title": "",
-          "cls": "diff-hunk-button accept",
-          "text": "Accept",
-          "innerHTML": "Accept",
-          "hasSvg": false,
-          "dataAttrs": {},
-          "visible": false,
-          "rect": {
-            "x": 0,
-            "y": 0,
-            "w": 0,
-            "h": 0
-          }
-        },
-        {
-          "aria": "",
-          "title": "",
-          "cls": "diff-hunk-button reject",
-          "text": "Reject",
-          "innerHTML": "Reject",
           "hasSvg": false,
           "dataAttrs": {},
           "visible": false,
@@ -1437,7 +1437,7 @@
     {
       "ctxId": 16,
       "frameUrl": "vscode-file://vscode-app/Applications/Antigravity.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html",
-      "totalBtns": 113,
+      "totalBtns": 139,
       "inputBoxFound": true,
       "inputBoxBtns": [
         {
@@ -1854,7 +1854,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 72,
+            "x": 53,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1870,7 +1870,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 249,
+            "x": 230,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1886,7 +1886,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 369,
+            "x": 350,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1902,7 +1902,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 511,
+            "x": 492,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1918,7 +1918,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 631,
+            "x": 612,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1934,7 +1934,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 802,
+            "x": 753,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1950,7 +1950,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 941,
+            "x": 877,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1966,7 +1966,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 1094,
+            "x": 1058,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1982,7 +1982,7 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 1223,
+            "x": 1200,
             "y": 40,
             "w": 20,
             "h": 20
@@ -1998,26 +1998,74 @@
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 1357,
+            "x": 1320,
             "y": 40,
             "w": 20,
             "h": 20
           }
         },
         {
-          "aria": "Open Changes",
+          "aria": "Close (⌘W)",
           "title": "",
-          "cls": "action-label codicon codicon-compare-changes",
+          "cls": "action-label codicon codicon-close",
           "text": "",
           "innerHTML": "",
           "hasSvg": false,
           "dataAttrs": {},
           "visible": true,
           "rect": {
-            "x": 970,
-            "y": 39,
-            "w": 22,
-            "h": 22
+            "x": 1449,
+            "y": 40,
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "aria": "Close (⌘W)",
+          "title": "",
+          "cls": "action-label codicon codicon-close",
+          "text": "",
+          "innerHTML": "",
+          "hasSvg": false,
+          "dataAttrs": {},
+          "visible": true,
+          "rect": {
+            "x": 1586,
+            "y": 40,
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "aria": "Close (⌘W)",
+          "title": "",
+          "cls": "action-label codicon codicon-close",
+          "text": "",
+          "innerHTML": "",
+          "hasSvg": false,
+          "dataAttrs": {},
+          "visible": true,
+          "rect": {
+            "x": 1706,
+            "y": 40,
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "aria": "Close (⌘W)",
+          "title": "",
+          "cls": "action-label codicon codicon-close",
+          "text": "",
+          "innerHTML": "",
+          "hasSvg": false,
+          "dataAttrs": {},
+          "visible": true,
+          "rect": {
+            "x": 1840,
+            "y": 40,
+            "w": 20,
+            "h": 20
           }
         },
         {
@@ -2090,54 +2138,6 @@
           "cls": "diff-hunk-button accept",
           "text": "Accept⌥⏎",
           "innerHTML": "Accept<span class=\"shortcut-label\">⌥⏎</span>",
-          "hasSvg": false,
-          "dataAttrs": {},
-          "visible": true,
-          "rect": {
-            "x": 806,
-            "y": 236,
-            "w": 84,
-            "h": 20
-          }
-        },
-        {
-          "aria": "",
-          "title": "",
-          "cls": "diff-hunk-button reject",
-          "text": "Reject⇧⌥⌫",
-          "innerHTML": "Reject<span class=\"shortcut-label\">⇧⌥⌫</span>",
-          "hasSvg": false,
-          "dataAttrs": {},
-          "visible": true,
-          "rect": {
-            "x": 892,
-            "y": 236,
-            "w": 83,
-            "h": 20
-          }
-        },
-        {
-          "aria": "",
-          "title": "",
-          "cls": "diff-hunk-button accept",
-          "text": "Accept",
-          "innerHTML": "Accept",
-          "hasSvg": false,
-          "dataAttrs": {},
-          "visible": false,
-          "rect": {
-            "x": 0,
-            "y": 0,
-            "w": 0,
-            "h": 0
-          }
-        },
-        {
-          "aria": "",
-          "title": "",
-          "cls": "diff-hunk-button reject",
-          "text": "Reject",
-          "innerHTML": "Reject",
           "hasSvg": false,
           "dataAttrs": {},
           "visible": false,
