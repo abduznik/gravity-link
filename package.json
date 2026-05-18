@@ -3,7 +3,7 @@
     "displayName": "Gravity Link",
     "description": "Mobile upload and voice-to-text bridge for Gravity",
     "icon": "icon.png",
-    "version": "1.0.14",
+    "version": "1.0.15",
     "mcpName": "io.github.cafeTechne/gravity-link",
     "files": [
         "out/**",
