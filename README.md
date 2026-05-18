@@ -34,7 +34,7 @@ Run the native compiled binary on your preferred port and advertise your local I
 
 ```bash
 # Run Apple Silicon binary on port 3002 and Tailscale IP
-./out/antigravity-link-extension-arm64 --port 3002 --host <YOUR_IP>
+./out/antigravity-link-macos-apple-silicon --port 3002 --host <YOUR_IP>
 ```
 
 ### Options
@@ -70,10 +70,10 @@ To bundle the UI code and package the whole project into self-contained multi-pl
    ```
 
 Outputs will be saved in `out/` as:
-- `antigravity-link-extension-arm64` (Apple Silicon macOS)
-- `antigravity-link-extension-x64` (Intel macOS)
-- `antigravity-link-extension-linux` (Linux x64)
-- `antigravity-link-extension.exe` (Windows x64)
+- `antigravity-link-macos-apple-silicon` (Apple Silicon macOS)
+- `antigravity-link-macos-intel` (Intel macOS)
+- `antigravity-link-linux-x64` (Linux x64)
+- `antigravity-link-windows.exe` (Windows x64)
 
 ---
 

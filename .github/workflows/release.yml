@@ -40,10 +40,10 @@ jobs:
 
       - name: Rename Binaries for Clean Release Names
         run: |
-          mv out/antigravity-link-extension-macos-arm64 out/antigravity-link-arm64 || mv out/antigravity-link-extension-macos out/antigravity-link-arm64 || true
-          mv out/antigravity-link-extension-macos-x64 out/antigravity-link-x64 || true
-          mv out/antigravity-link-extension-linux-x64 out/antigravity-link-linux || mv out/antigravity-link-extension-linux out/antigravity-link-linux || true
-          mv out/antigravity-link-extension-win-x64.exe out/antigravity-link.exe || mv out/antigravity-link-extension-win.exe out/antigravity-link.exe || true
+          mv out/antigravity-link-extension-macos-arm64 out/antigravity-link-macos-apple-silicon || mv out/antigravity-link-extension-macos out/antigravity-link-macos-apple-silicon || true
+          mv out/antigravity-link-extension-macos-x64 out/antigravity-link-macos-intel || true
+          mv out/antigravity-link-extension-linux-x64 out/antigravity-link-linux-x64 || mv out/antigravity-link-extension-linux out/antigravity-link-linux-x64 || true
+          mv out/antigravity-link-extension-win-x64.exe out/antigravity-link-windows.exe || mv out/antigravity-link-extension-win.exe out/antigravity-link-windows.exe || true
           ls -la out/
 
       - name: Upload Binaries to GitHub Release
@@ -52,10 +52,10 @@ jobs:
           tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'latest' }}
           name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'Latest Standalone Build' }}
           files: |
-            out/antigravity-link-arm64
-            out/antigravity-link-x64
-            out/antigravity-link-linux
-            out/antigravity-link.exe
+            out/antigravity-link-macos-apple-silicon
+            out/antigravity-link-macos-intel
+            out/antigravity-link-linux-x64
+            out/antigravity-link-windows.exe
           draft: false
           prerelease: false
         env:
