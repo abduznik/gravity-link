@@ -681,6 +681,27 @@ export class AntigravityServer {
             res.status(404).json({ error: 'Plan file not found', searched: brainDir });
         });
 
+        router.get('/file-content', (req, res) => {
+            const relPath = String(req.query.path || '').trim();
+            if (!relPath) return res.status(400).json({ error: 'Missing path parameter' });
+            
+            // Resolve path safely under workspaceRoot
+            const safePath = path.resolve(this.workspaceRoot, relPath);
+            if (!safePath.startsWith(this.workspaceRoot)) {
+                return res.status(403).json({ error: 'Access denied: outside of workspace root' });
+            }
+            
+            try {
+                if (!fs.existsSync(safePath)) {
+                    return res.status(404).json({ error: 'File not found' });
+                }
+                const content = fs.readFileSync(safePath, 'utf8');
+                res.json({ content, path: relPath });
+            } catch (e) {
+                res.status(500).json({ error: (e as Error).message });
+            }
+        });
+
         router.get('/instances', async (_req, res) => {
             try {
                 const instances = await discoverInstances();

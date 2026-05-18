@@ -794,6 +794,17 @@
         <div id="contentSheetBody" class="content-sheet-body"></div>
     </div>
 
+    <!-- Premium Code Preview Modal -->
+    <div id="codePreviewSheet" class="bottom-sheet" role="dialog" aria-modal="true" style="max-height: 85vh; display: none;">
+        <div class="sheet-header">
+            <h3 id="codePreviewTitle" class="sheet-title" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--md-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;">File Changes</h3>
+            <button id="codePreviewClose" class="sheet-close" aria-label="Close">&times;</button>
+        </div>
+        <div id="codePreviewBody" class="content-sheet-body" style="padding: 0; overflow: auto; background: #0c101b;">
+            <pre id="codePreviewPre" style="margin: 0; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.6; color: #f8fafc; white-space: pre; overflow-x: auto; -webkit-overflow-scrolling: touch;"></pre>
+        </div>
+    </div>
+
     <!-- Debug Log -->
     <div id="debugLog" role="log" aria-live="off" aria-label="Debug log"></div>
 
@@ -2669,6 +2680,44 @@
             if (!target || !(target instanceof Element)) return;
             if (target.id === 'snapshotHost') return;
 
+            // Detect if the click target or any ancestor contains a filename with a standard extension
+            let curr = target;
+            let fileToPreview = null;
+            while (curr && curr !== chatContent && curr.id !== 'snapshotHost') {
+                const text = (curr.innerText || curr.textContent || '').trim();
+                const match = text.match(/\b([\w/.-]+\.(ts|js|json|css|html|md|py|go|rs|c|cpp|h|yml|yaml|sh|txt))\b/i);
+                if (match) {
+                    fileToPreview = match[1];
+                    break;
+                }
+                if (curr.parentElement) {
+                    curr = curr.parentElement;
+                } else {
+                    const rootNode = curr.getRootNode ? curr.getRootNode() : null;
+                    curr = rootNode instanceof ShadowRoot ? rootNode.host : null;
+                }
+            }
+
+            if (fileToPreview) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                showCodePreview(fileToPreview, 'Loading file changes...');
+                try {
+                    const res = await fetch(`/file-content?path=${encodeURIComponent(fileToPreview)}&token=${encodeURIComponent(authToken)}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        showCodePreview(fileToPreview, data.content);
+                    } else {
+                        const errData = await res.json().catch(() => ({}));
+                        showCodePreview(fileToPreview, `Failed to load file content.\n\nError: ${errData.error || res.statusText}`);
+                    }
+                } catch (err) {
+                    showCodePreview(fileToPreview, `Failed to connect to companion server.\n\nError: ${err.message}`);
+                }
+                return;
+            }
+
             let interactive = target;
             while (interactive && interactive !== chatContent && interactive.id !== 'snapshotHost') {
                 const tag = interactive.tagName.toLowerCase();
@@ -2755,6 +2804,11 @@
         const contentSheetTitle = document.getElementById('contentSheetTitle');
         const contentSheetBody = document.getElementById('contentSheetBody');
         const contentSheetClose = document.getElementById('contentSheetClose');
+
+        const codePreviewSheet = document.getElementById('codePreviewSheet');
+        const codePreviewTitle = document.getElementById('codePreviewTitle');
+        const codePreviewPre = document.getElementById('codePreviewPre');
+        const codePreviewClose = document.getElementById('codePreviewClose');
 
         let lastControlsSignature = '';
         let currentModeSelector = '';
@@ -2915,7 +2969,7 @@
         function hideSheet() {
             sheetOverlay.classList.remove('show');
             optionsSheet.classList.remove('show');
-            if (!contentSheet.classList.contains('show')) {
+            if (!contentSheet.classList.contains('show') && !codePreviewSheet.classList.contains('show')) {
                 setTimeout(() => { sheetOverlay.style.display = 'none'; }, 300);
             }
             pendingMenuClick = false;
@@ -2940,10 +2994,29 @@
         function hideContentSheet() {
             sheetOverlay.classList.remove('show');
             contentSheet.classList.remove('show');
-            if (!optionsSheet.classList.contains('show')) {
+            if (!optionsSheet.classList.contains('show') && !codePreviewSheet.classList.contains('show')) {
                 setTimeout(() => { sheetOverlay.style.display = 'none'; }, 300);
             }
             pendingContentType = '';
+        }
+
+        function showCodePreview(title, codeText) {
+            codePreviewTitle.textContent = title;
+            codePreviewPre.textContent = codeText;
+            codePreviewSheet.style.display = 'flex';
+            sheetOverlay.style.display = 'block';
+            setTimeout(() => {
+                sheetOverlay.classList.add('show');
+                codePreviewSheet.classList.add('show');
+            }, 10);
+        }
+
+        function hideCodePreview() {
+            sheetOverlay.classList.remove('show');
+            codePreviewSheet.classList.remove('show');
+            if (!optionsSheet.classList.contains('show') && !contentSheet.classList.contains('show')) {
+                setTimeout(() => { sheetOverlay.style.display = 'none'; }, 300);
+            }
         }
 
         // Returns prose-like text from an element, or null if it looks like CSS/code noise.
@@ -3115,7 +3188,8 @@
 
         if (sheetClose) sheetClose.addEventListener('click', hideSheet);
         if (contentSheetClose) contentSheetClose.addEventListener('click', hideContentSheet);
-        if (sheetOverlay) sheetOverlay.addEventListener('click', () => { hideSheet(); hideContentSheet(); });
+        if (codePreviewClose) codePreviewClose.addEventListener('click', hideCodePreview);
+        if (sheetOverlay) sheetOverlay.addEventListener('click', () => { hideSheet(); hideContentSheet(); hideCodePreview(); });
 
         if (modeChip) modeChip.addEventListener('click', () => { if (currentModeSelector) sendClickToServer(currentModeSelector, currentModeText, 'mode', true); });
         if (modelChip) modelChip.addEventListener('click', () => { if (currentModelSelector) sendClickToServer(currentModelSelector, currentModelText, 'model', true); });
