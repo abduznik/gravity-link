@@ -167,14 +167,22 @@ async function startServer(context: vscode.ExtensionContext, isAutoStart: boolea
     };
 
     // Start the server
-    const newServer = new AntigravityServer(port, context.extensionPath, workspaceRoot, useHttps, preferredHost, primarySendFn, getActiveCascadeIdFn);
+    const newServer = new AntigravityServer(
+        port,
+        context.extensionPath,
+        workspaceRoot,
+        useHttps,
+        preferredHost,
+        primarySendFn,
+        getActiveCascadeIdFn,
+        (msg: string) => {
+            outputChannel.appendLine(msg);
+        }
+    );
 
     try {
         const urls = await newServer.start();
         server = newServer; // Only assign global server AFTER it has successfully started and has URLs
-
-        console.log(`[Extension] Server started: ${urls.localUrl}`);
-        console.log(`[Extension] Secure URL: ${urls.secureUrl}`);
 
         outputChannel.appendLine(`✅ Server running!`);
         outputChannel.appendLine(`   Local:  ${urls.localUrl}`);

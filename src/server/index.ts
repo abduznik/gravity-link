@@ -58,13 +58,33 @@ export class AntigravityServer {
     private primarySendFn: ((msg: string) => Promise<boolean>) | null = null;
     private getActiveCascadeIdFn: (() => Promise<string>) | null = null;
     private isGeneratingTracker = new IsGeneratingTracker(10_000);
+    private logFn?: (msg: string) => void;
 
-    constructor(port: number, extensionPath: string, workspaceRoot?: string, useHttps = true, preferredHost = '', primarySendFn?: (message: string) => Promise<boolean>, getActiveCascadeIdFn?: () => Promise<string>) {
+    private log(msg: string) {
+        console.log(msg);
+        if (this.logFn) {
+            try {
+                this.logFn(msg);
+            } catch { }
+        }
+    }
+
+    constructor(
+        port: number,
+        extensionPath: string,
+        workspaceRoot?: string,
+        useHttps = true,
+        preferredHost = '',
+        primarySendFn?: (message: string) => Promise<boolean>,
+        getActiveCascadeIdFn?: () => Promise<string>,
+        logFn?: (msg: string) => void
+    ) {
         this.port = port;
         this.useHttps = useHttps;
         this.preferredHost = preferredHost.trim();
         this.primarySendFn = primarySendFn || null;
         this.getActiveCascadeIdFn = getActiveCascadeIdFn || null;
+        this.logFn = logFn;
         this.extensionPath = extensionPath;
         this.app = express();
         // Prefer workspace root uploads/public (matches npm run dev), fall back to extension path
@@ -264,7 +284,7 @@ export class AntigravityServer {
             const isPaletteOnly = !!bestDiag?.hasCommandPalette && !bestDiag?.hasCascade && !bestDiag?.hasComposer && !bestDiag?.hasMessages;
             const ok = finalScore >= 4 && !isPaletteOnly;
             const reason = ok ? 'chat_surface' : (isPaletteOnly ? 'command_palette_surface' : 'weak_chat_signal');
-            console.log(`[TRACE] cdp.probe ${JSON.stringify({ id: candidate.id, title: candidate.title, score: finalScore, reason, diag: bestDiag || null })}`);
+            this.log(`[TRACE] cdp.probe ${JSON.stringify({ id: candidate.id, title: candidate.title, score: finalScore, reason, diag: bestDiag || null })}`);
             if (!ok) {
                 try { conn.ws.close(); } catch { }
                 return { ok: false, score: finalScore, reason };
@@ -277,6 +297,10 @@ export class AntigravityServer {
 
     private async initCDP(targetId?: string): Promise<void> {
         const instances = await discoverInstances();
+        this.log(`[CDP] Discovered ${instances.length} candidate target(s):`);
+        for (const inst of instances) {
+            this.log(`  - "${inst.title}" (Port: ${inst.port}, ID: ${inst.id})`);
+        }
 
         // Select target by id if provided, else best-scoring chat target, else best overall
         let chosen = targetId ? instances.find(i => i.id === targetId) : null;
@@ -337,7 +361,7 @@ export class AntigravityServer {
         if (!selectedConn && fallbackConn && fallbackTarget) {
             selectedConn = fallbackConn;
             selectedTarget = fallbackTarget;
-            console.log(`[TRACE] cdp.fallback_target ${JSON.stringify({ id: fallbackTarget.id, title: fallbackTarget.title })}`);
+            this.log(`[TRACE] cdp.fallback_target ${JSON.stringify({ id: fallbackTarget.id, title: fallbackTarget.title })}`);
         }
 
         if (selectedConn && selectedTarget) {
@@ -355,11 +379,11 @@ export class AntigravityServer {
             if (!this.state.reinitInProgress && (now - this.state.lastCdpInitAttemptAt > 2000)) {
                 this.state.reinitInProgress = true;
                 this.state.lastCdpInitAttemptAt = now;
-                console.log('[TRACE] cdp.reconnect attempting init from empty-connection state');
+                this.log('[TRACE] cdp.reconnect attempting init from empty-connection state');
                 try {
                     await this.initCDP();
                 } catch (err) {
-                    console.log('[TRACE] cdp.reconnect failed:', (err as Error).message);
+                    this.log(`[TRACE] cdp.reconnect failed: ${(err as Error).message}`);
                 } finally {
                     this.state.reinitInProgress = false;
                 }
@@ -376,7 +400,7 @@ export class AntigravityServer {
             const snapshot = await captureSnapshot(cdp);
             if (snapshot && !snapshot.error) {
                 if (!this.isSnapshotUsable(snapshot)) {
-                    console.log('[TRACE] snapshot.rejected unusable surface');
+                    this.log('[TRACE] snapshot.rejected unusable surface');
                     this.state.missedSnapshots += 1;
                     return false;
                 }
@@ -420,20 +444,20 @@ export class AntigravityServer {
                 this.state.missedSnapshots = 0;
                 return false;
             } else if (snapshot && snapshot.error) {
-                console.error(`⚠️ Capture Error (${cdp.title}):`, snapshot.error);
+                this.log(`⚠️ Capture Error (${cdp.title}): ${snapshot.error}`);
             }
         } catch (err) {
-            console.error('Snapshot error:', (err as Error).message);
+            this.log(`Snapshot error: ${(err as Error).message}`);
         }
 
         this.state.missedSnapshots += 1;
         if (this.state.missedSnapshots >= 3 && !this.state.reinitInProgress) {
             this.state.reinitInProgress = true;
-            console.log('[TRACE] snapshot.missed_reinit attempting CDP rebind');
+            this.log('[TRACE] snapshot.missed_reinit attempting CDP rebind');
             try {
                 await this.initCDP();
             } catch (err) {
-                console.log('[TRACE] snapshot.missed_reinit failed:', (err as Error).message);
+                this.log(`[TRACE] snapshot.missed_reinit failed: ${(err as Error).message}`);
             } finally {
                 this.state.reinitInProgress = false;
                 this.state.missedSnapshots = 0;
@@ -1236,7 +1260,7 @@ export class AntigravityServer {
 
                 this.server.on('error', (e) => reject(e));
 
-                this.server.listen(this.port, async () => {
+                this.server.listen(this.port, '0.0.0.0', async () => {
                     const interfaces = os.networkInterfaces();
                     const localIp = this.pickBestLocalIp(interfaces);
 
@@ -1249,7 +1273,7 @@ export class AntigravityServer {
                     try {
                         await this.initCDP();
                     } catch (err) {
-                        console.log('⚠️ Initial CDP connection failed, will keep polling...');
+                        this.log(`⚠️ Initial CDP connection failed, will keep polling: ${(err as Error).message}`);
                     }
 
                     this.state.pollInterval = setInterval(() => this.updateSnapshot(), POLL_INTERVAL);
