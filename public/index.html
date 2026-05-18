@@ -8,39 +8,42 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#141218">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#090d16">
     <title>Antigravity Link</title>
     <style>
-        /* ── MD3 Dark Baseline Color Tokens ──────────────────────────────── */
+        /* ── Antigravity Premium Color & Layout System ────────────────────── */
         :root {
-            --md-bg:          #141218;
-            --md-surf-lo:     #1d1b20;
-            --md-surf:        #211f26;
-            --md-surf-hi:     #2b2930;
-            --md-surf-xhi:    #36343b;
-            --md-on-surf:     #e6e1e5;
-            --md-on-surf-var: #cac4d0;
-            --md-outline:     #938f99;
-            --md-outline-var: #49454f;
-            /* Primary — blue matching Antigravity */
-            --md-primary:     #aac7ff;
-            --md-on-primary:  #0a305f;
-            --md-prim-cont:   #284777;
-            --md-on-prim-c:   #d6e3ff;
+            --md-bg:          #090d16;
+            --md-surf-lo:     #0f1420;
+            --md-surf:        #151c2c;
+            --md-surf-hi:     #1d283c;
+            --md-surf-xhi:    #26334d;
+            --md-on-surf:     #f8fafc;
+            --md-on-surf-var: #94a3b8;
+            --md-outline:     #334155;
+            --md-outline-var: #1e293b;
+            /* Primary — Vibrant Cyan-Blue matching Antigravity */
+            --md-primary:     #38bdf8;
+            --md-on-primary:  #0369a1;
+            --md-prim-cont:   #0284c7;
+            --md-on-prim-c:   #e0f2fe;
             /* Error */
-            --md-error:       #ffb4ab;
-            --md-err-cont:    #93000a;
-            /* MD3 Shape tokens */
-            --md-r-xs:   4px;
-            --md-r-sm:   8px;
-            --md-r-md:   12px;
-            --md-r-lg:   16px;
-            --md-r-xl:   28px;
-            --md-r-full: 50px;
-            /* MD3 Elevation */
-            --md-elev1: 0 1px 2px rgba(0,0,0,.3), 0 2px 6px rgba(0,0,0,.15);
-            --md-elev2: 0 1px 2px rgba(0,0,0,.3), 0 4px 8px rgba(0,0,0,.2);
-            --md-elev3: 0 4px 8px rgba(0,0,0,.3), 0 8px 16px rgba(0,0,0,.2);
+            --md-error:       #f87171;
+            --md-err-cont:    #7f1d1d;
+            /* UI Rounded Shape tokens */
+            --md-r-xs:   6px;
+            --md-r-sm:   10px;
+            --md-r-md:   16px;
+            --md-r-lg:   20px;
+            --md-r-xl:   32px;
+            --md-r-full: 9999px;
+            /* Glassmorphic & Material elevations */
+            --md-elev1: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+            --md-elev2: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+            --md-elev3: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
         }
 
         /* ── Reset ───────────────────────────────────────────────────────── */
@@ -53,7 +56,7 @@
         html { height: 100%; overflow: hidden; }
 
         body {
-            font-family: 'Google Sans', 'Roboto', system-ui, -apple-system, sans-serif;
+            font-family: 'Outfit', system-ui, -apple-system, sans-serif;
             background: var(--md-bg);
             color: var(--md-on-surf);
             height: 100%;
@@ -70,14 +73,16 @@
 
         /* ── MD3 Top App Bar ─────────────────────────────────────────────── */
         .md-top-bar {
-            height: 48px;
-            background: var(--md-surf-hi);
+            height: 52px;
+            background: rgba(15, 20, 32, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             display: flex;
             align-items: center;
-            padding: 0 2px 0 12px;
-            gap: 2px;
+            padding: 0 4px 0 16px;
+            gap: 4px;
             flex-shrink: 0;
-            box-shadow: var(--md-elev1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             z-index: 100;
         }
 
@@ -91,37 +96,56 @@
             cursor: pointer;
             border-radius: var(--md-r-full);
         }
-        #connectivityBadge:active { background: rgba(255,255,255,.06); }
+        #connectivityBadge:active { background: rgba(255,255,255,.08); }
 
         #statusDot {
             width: 8px; height: 8px;
             border-radius: 50%;
             background: var(--md-outline);
             flex-shrink: 0;
+            box-shadow: 0 0 0 rgba(255,255,255,0);
+            transition: all 0.3s ease;
+        }
+
+        #statusDot.active-ws {
+            box-shadow: 0 0 8px #4ade80;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
         }
 
         #statusText {
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
             color: var(--md-on-surf-var);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        /* ── MD3 Icon Button (44×44 visual, 48px touch target via padding) ── */
+        /* ── MD3 Icon Button ── */
         .md-icon-btn {
-            width: 44px; height: 44px;
+            width: 36px; height: 36px;
             border-radius: var(--md-r-full);
             display: flex; align-items: center; justify-content: center;
-            background: transparent;
-            border: none;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             color: var(--md-on-surf-var);
             cursor: pointer;
             position: relative;
             overflow: hidden;
             flex-shrink: 0;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .md-icon-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--md-on-surf);
+            border-color: rgba(255, 255, 255, 0.12);
         }
         .md-icon-btn::after {
             content: '';
@@ -172,39 +196,46 @@
         }
         @keyframes md-spin { to { transform: rotate(360deg); } }
 
-        /* ── Chips Bar (MD3 Assist Chip spec) ────────────────────────────── */
+        /* ── Chips Bar ───────────────────────────────────────────────────── */
         #nativeStatusBar {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
-            background: var(--md-surf);
-            border-top: 1px solid var(--md-outline-var);
+            gap: 6px;
+            padding: 8px 12px;
+            background: rgba(15, 20, 32, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
             flex-shrink: 0;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .control-chip {
             display: inline-flex;
             align-items: center;
-            height: 28px;
-            padding: 0 10px;
+            height: 30px;
+            padding: 0 12px;
             border-radius: var(--md-r-full);
-            border: 1px solid var(--md-outline-var);
-            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.03);
             color: var(--md-on-surf-var);
             font-family: inherit;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.1px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
             gap: 6px;
             cursor: pointer;
             position: relative;
             overflow: hidden;
             user-select: none;
             touch-action: manipulation;
-            /* Extend touch target beyond visual bounds */
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             -webkit-tap-highlight-color: transparent;
+        }
+        .control-chip:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--md-on-surf);
+            border-color: rgba(255, 255, 255, 0.16);
         }
         .control-chip::before {
             content: '';
@@ -257,33 +288,37 @@
             color: #34d399;
         }
 
-        /* ── MD3 Input Bar ───────────────────────────────────────────────── */
+        /* ── Antigravity Input Bar ───────────────────────────────────────── */
         .md-input-bar {
             display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 6px 6px;
-            padding-bottom: max(6px, env(safe-area-inset-bottom));
-            background: var(--md-surf);
-            border-top: 1px solid var(--md-outline-var);
+            align-items: flex-end;
+            gap: 8px;
+            padding: 10px 12px;
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
+            background: rgba(15, 20, 32, 0.85);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
             flex-shrink: 0;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
-        /* MD3 Filled Text Field */
+        /* Sleek Pill Field Wrap */
         .md-field-wrap {
             flex: 1;
-            background: var(--md-surf-xhi);
-            border-radius: var(--md-r-md) var(--md-r-md) var(--md-r-xs) var(--md-r-xs);
-            border-bottom: 1.5px solid var(--md-outline);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--md-r-md);
             display: flex;
-            align-items: center;
-            padding: 0 10px;
+            align-items: flex-end;
+            padding: 2px 12px;
             min-height: 40px;
-            transition: border-color 0.15s, border-bottom-width 0.1s;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             min-width: 0;
         }
         .md-field-wrap:focus-within {
-            border-bottom: 2px solid var(--md-primary);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--md-primary);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
         }
 
         #messageInput {
@@ -293,30 +328,36 @@
             outline: none;
             color: var(--md-on-surf);
             font-family: inherit;
-            font-size: 16px;
-            line-height: 20px;
+            font-size: 15px;
+            line-height: 22px;
             padding: 8px 0;
             resize: none;
             max-height: 140px;
-            min-height: 20px;
+            min-height: 22px;
         }
-        #messageInput::placeholder { color: var(--md-outline); }
+        #messageInput::placeholder { color: #4b5563; }
 
         /* MD3 Small FAB — send button */
         #sendBtn {
-            width: 44px; height: 44px;
+            width: 40px; height: 40px;
             border-radius: var(--md-r-md);
-            background: var(--md-prim-cont);
-            color: var(--md-on-prim-c);
+            background: var(--md-primary);
+            color: #0f172a;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: var(--md-elev3);
+            box-shadow: 0 4px 10px rgba(56, 189, 248, 0.2);
             cursor: pointer;
             flex-shrink: 0;
             position: relative;
             overflow: hidden;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #sendBtn:hover:not(:disabled) {
+            transform: scale(1.05);
+            background: #7dd3fc;
+            box-shadow: 0 6px 14px rgba(56, 189, 248, 0.35);
         }
         #sendBtn::after {
             content: '';
@@ -327,7 +368,13 @@
             pointer-events: none;
         }
         #sendBtn:active::after { opacity: 0.12; }
-        #sendBtn:disabled { opacity: 0.38; box-shadow: none; }
+        #sendBtn:disabled {
+            opacity: 0.25;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--md-on-surf-var);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
         #sendBtn svg { pointer-events: none; }
 
         /* ── Scroll-to-bottom FAB ────────────────────────────────────────── */
@@ -520,15 +567,22 @@
 
         /* MD3 List item */
         .option-item {
-            min-height: 56px;
-            padding: 12px 20px;
+            min-height: 50px;
+            padding: 10px 20px;
             color: var(--md-on-surf);
             display: flex;
             align-items: center;
             cursor: pointer;
             font-size: 14px;
+            font-weight: 500;
             position: relative;
             overflow: hidden;
+            width: 100%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: background 0.15s ease;
+        }
+        .option-item:hover {
+            background: rgba(255, 255, 255, 0.03);
         }
         .option-item::after {
             content: '';
@@ -1948,8 +2002,10 @@
 
         function updateConnectionUI(mode) {
             statusText.textContent = mode.toUpperCase();
+            statusDot.className = ''; // Reset classes
             if (mode === 'ws') {
                 statusDot.style.background = '#4ade80'; // Green
+                statusDot.classList.add('active-ws');
                 statusText.style.color = '#4ade80';
             } else if (mode === 'http') {
                 statusDot.style.background = '#fbbf24'; // Amber
@@ -2794,7 +2850,7 @@
             uniqueOptions.forEach(opt => {
                 const div = document.createElement('div');
                 div.className = 'option-item';
-                div.innerHTML = `<span class="icon">●</span> ${opt.text}`;
+                div.innerHTML = `<span class="icon" style="margin-right: 12px; flex-shrink: 0; color: var(--md-primary);">●</span> <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;">${opt.text}</span>`;
                 div.addEventListener('click', async () => {
                     if (lastClickedType === 'mode') {
                         modeVal.textContent = opt.text;
