@@ -2625,13 +2625,10 @@
         async function forwardSnapshotClick(e) {
             if (!authToken) return;
 
-            // During generation, tapping anything in the mirror near the input box area
-            // risks clicking the mic button (which sits next to the cancel button). Route
-            // all mirror taps to stopGeneration() instead of forwarding as raw CDP clicks.
+            // During generation, ignore click forwarding to the IDE to prevent accidental triggers,
+            // but let the user interact with the screen normally (copying text, scrolling, etc.)
+            // without cancelling the agent. The agent will only stop if they tap the Stop button/chip.
             if (lastSnapshotData?.isGenerating) {
-                e.preventDefault();
-                e.stopPropagation();
-                stopGeneration();
                 return;
             }
 

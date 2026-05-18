@@ -8,13 +8,9 @@
     "files": [
         "out/**",
         "public/**",
-        "mcp-server.mjs",
-        "openapi.yaml",
         "icon.png",
         "README.md",
-        "LICENSE",
-        "CHANGELOG.md",
-        "package.nls*.json"
+        "LICENSE"
     ],
     "license": "MIT",
     "engines": {
