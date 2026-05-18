@@ -1423,6 +1423,16 @@
 
         function applyIconFallbacks(root) {
             if (!root) return;
+
+            // Hide standalone and embedded google symbol arrow/chevron elements
+            const symbols = root.querySelectorAll('.google-symbols, [class*="symbol"], [class*="icon"]');
+            symbols.forEach((el) => {
+                const text = String(el.innerText || el.textContent || '').trim();
+                if (isArrowOrNavigationText(text)) {
+                    el.style.setProperty('display', 'none', 'important');
+                }
+            });
+
             const targets = root.querySelectorAll('button, [role="button"]');
             targets.forEach((el) => {
                 if (isArrowOrNavigationButton(el)) {
