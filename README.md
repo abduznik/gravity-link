@@ -1,4 +1,4 @@
-# Antigravity Link (Standalone Bridge)
+# Gravity Link (Standalone Bridge)
 
 A beautiful, ultra-premium mobile companion for Antigravity. It mirrors your active desktop IDE chat sessions directly to your mobile phone or browser—allowing you to read streaming replies, send messages, dictate using voice, and stop active generations from anywhere on your local network or Tailscale VPN.
 
@@ -34,7 +34,7 @@ Run the native compiled binary on your preferred port and advertise your local I
 
 ```bash
 # Run Apple Silicon binary on port 3002 and Tailscale IP
-./out/antigravity-link-macos-apple-silicon --port 3002 --host <YOUR_IP>
+./out/gravity-link-macos-apple-silicon --port 3002 --host <YOUR_IP>
 ```
 
 ### Options
@@ -70,10 +70,10 @@ To bundle the UI code and package the whole project into self-contained multi-pl
    ```
 
 Outputs will be saved in `out/` as:
-- `antigravity-link-macos-apple-silicon` (Apple Silicon macOS)
-- `antigravity-link-macos-intel` (Intel macOS)
-- `antigravity-link-linux-x64` (Linux x64)
-- `antigravity-link-windows.exe` (Windows x64)
+- `gravity-link-macos-apple-silicon` (Apple Silicon macOS)
+- `gravity-link-macos-intel` (Intel macOS)
+- `gravity-link-linux-x64` (Linux x64)
+- `gravity-link-windows.exe` (Windows x64)
 
 ---
 

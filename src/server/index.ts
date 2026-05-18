@@ -161,9 +161,9 @@ export class AntigravityServer {
         const url = (target.url || '').toLowerCase();
         let score = 0;
         if (url.includes('workbench') || url.includes('jetski')) score += 6;
-        if (title.includes('antigravity-link')) score += 6;
+        if (title.includes('gravity-link') || title.includes('antigravity-link')) score += 6;
         if (title.includes('launchpad')) score += 2; // lower priority than chat
-        if (title.includes('antigravity')) score += 2;
+        if (title.includes('gravity') || title.includes('antigravity')) score += 2;
         if (title.includes('auth.ts')) score -= 6;
         if (url.includes('devtools') || title.includes('visual studio code')) score -= 8;
         if (title.includes('vscode-webview')) score -= 8;

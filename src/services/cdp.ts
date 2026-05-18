@@ -72,11 +72,11 @@ export async function discoverInstances(): Promise<CDPInfo[]> {
             const lowerTitle = title.toLowerCase();
             const lowerUrl = url.toLowerCase();
 
-            const isSelf = title === 'Antigravity Link' || title === 'Antigravity-Link';
-            const isBridgeUi = lowerTitle === 'antigravity link' || lowerTitle === 'antigravity-link';
+            const isSelf = title === 'Gravity Link' || title === 'Gravity-Link' || title === 'Antigravity Link' || title === 'Antigravity-Link';
+            const isBridgeUi = lowerTitle === 'gravity link' || lowerTitle === 'gravity-link' || lowerTitle === 'antigravity link' || lowerTitle === 'antigravity-link';
             const isDevtools = lowerTitle.includes('devtools') || lowerUrl.includes('devtools');
             const isWebview = lowerTitle.includes('vscode-webview') || lowerUrl.includes('vscode-webview');
-            const isOwnExtensionWebview = isWebview && lowerUrl.includes('extensionid=cafetechne.antigravity-link-extension');
+            const isOwnExtensionWebview = isWebview && (lowerUrl.includes('extensionid=cafetechne.gravity-link-extension') || lowerUrl.includes('extensionid=cafetechne.antigravity-link-extension'));
             const isServiceWorker = type === 'service_worker';
             const isLaunchpad = lowerTitle.includes('launchpad');
             const isWorkbench = lowerUrl.includes('workbench.html');

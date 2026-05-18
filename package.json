@@ -1,10 +1,10 @@
 {
-    "name": "antigravity-link-extension",
-    "displayName": "Antigravity Link",
-    "description": "Mobile upload and voice-to-text bridge for Antigravity",
+    "name": "gravity-link-extension",
+    "displayName": "Gravity Link",
+    "description": "Mobile upload and voice-to-text bridge for Gravity",
     "icon": "icon.png",
     "version": "1.0.14",
-    "mcpName": "io.github.cafeTechne/antigravity-link",
+    "mcpName": "io.github.cafeTechne/gravity-link",
     "files": [
         "out/**",
         "public/**",
@@ -22,12 +22,12 @@
     "publisher": "cafetechne",
     "repository": {
         "type": "git",
-        "url": "https://github.com/cafeTechne/antigravity-link-extension"
+        "url": "https://github.com/abduznik/gravity-link"
     },
     "activationEvents": [
         "onStartupFinished",
-        "onCommand:antigravity-link.start",
-        "onCommand:antigravity-link.selectNetworkInterface"
+        "onCommand:gravity-link.start",
+        "onCommand:gravity-link.selectNetworkInterface"
     ],
     "bin": "./out/standalone.js",
     "pkg": {
@@ -39,60 +39,60 @@
     "contributes": {
         "commands": [
             {
-                "command": "antigravity-link.start",
+                "command": "gravity-link.start",
                 "title": "Start Server",
-                "category": "Antigravity Link"
+                "category": "Gravity Link"
             },
             {
-                "command": "antigravity-link.stop",
+                "command": "gravity-link.stop",
                 "title": "Stop Server",
-                "category": "Antigravity Link"
+                "category": "Gravity Link"
             },
             {
-                "command": "antigravity-link.showQR",
+                "command": "gravity-link.showQR",
                 "title": "Show QR Code",
-                "category": "Antigravity Link"
+                "category": "Gravity Link"
             },
             {
-                "command": "antigravity-link.selectNetworkInterface",
+                "command": "gravity-link.selectNetworkInterface",
                 "title": "Select Network Interface",
-                "category": "Antigravity Link"
+                "category": "Gravity Link"
             }
         ],
         "configuration": {
-            "title": "Antigravity Link",
+            "title": "Gravity Link",
             "properties": {
-                "antigravityLink.port": {
+                "gravityLink.port": {
                     "type": "number",
                     "default": 3000,
                     "description": "%config.port.description%"
                 },
-                "antigravityLink.autoStart": {
+                "gravityLink.autoStart": {
                     "type": "boolean",
                     "default": false,
                     "description": "%config.autoStart.description%"
                 },
-                "antigravityLink.useHttps": {
+                "gravityLink.useHttps": {
                     "type": "boolean",
                     "default": false,
                     "description": "%config.useHttps.description%"
                 },
-                "antigravityLink.preferredHost": {
+                "gravityLink.preferredHost": {
                     "type": "string",
                     "default": "",
                     "description": "Preferred host IP address (e.g. your Tailscale IP) to bind and advertise."
                 },
-                "antigravityLink.preferredNetworkInterface": {
+                "gravityLink.preferredNetworkInterface": {
                     "type": "string",
                     "default": "",
                     "description": "%config.preferredNetworkInterface.description%"
                 },
-                "antigravityLink.strictWorkbenchOnly": {
+                "gravityLink.strictWorkbenchOnly": {
                     "type": "boolean",
                     "default": true,
                     "description": "%config.strictWorkbenchOnly.description%"
                 },
-                "antigravityLink.includeFallbackTargets": {
+                "gravityLink.includeFallbackTargets": {
                     "type": "boolean",
                     "default": false,
                     "description": "%config.includeFallbackTargets.description%"
@@ -107,7 +107,7 @@
         "typecheck": "tsc -p ./ --noEmit",
         "bundle": "node ./esbuild.js",
         "package": "vsce package",
-        "deploy": "npm run bundle && xcopy /Y out\\extension.js \"%USERPROFILE%\\.antigravity\\extensions\\cafetechne.antigravity-link-extension-1.0.13\\out\\\" && xcopy /Y public\\index.html \"%USERPROFILE%\\.antigravity\\extensions\\cafetechne.antigravity-link-extension-1.0.13\\public\\\"",
+        "deploy": "npm run bundle && xcopy /Y out\\extension.js \"%USERPROFILE%\\.antigravity\\extensions\\cafetechne.gravity-link-extension-1.0.13\\out\\\" && xcopy /Y public\\index.html \"%USERPROFILE%\\.antigravity\\extensions\\cafetechne.gravity-link-extension-1.0.13\\public\\\"",
         "test": "mocha -r ts-node/register src/test/injectFile.test.ts src/test/injectMessage.test.ts src/test/isGeneratingTracker.test.ts src/test/scriptValidity.test.ts"
     },
     "devDependencies": {

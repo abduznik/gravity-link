@@ -23,7 +23,7 @@ for (let i = 0; i < args.length; i++) {
 const extensionPath = path.dirname(__dirname);
 const workspaceRoot = process.cwd();
 
-console.log(`🚀 Starting Antigravity Standalone Link Server...`);
+console.log(`🚀 Starting Gravity Standalone Link Server...`);
 console.log(`-----------------------------------------------`);
 console.log(`Port: ${port}`);
 console.log(`Preferred Host: ${host || 'Auto-detect'}`);
@@ -43,7 +43,7 @@ const server = new AntigravityServer(
 );
 
 server.start().then((urls) => {
-    console.log(`\n✅ Antigravity Link is running tokenless!`);
+    console.log(`\n✅ Gravity Link is running tokenless!`);
     console.log(`Open in browser: ${urls.localUrl}`);
     console.log(`Close the server with Ctrl+C\n`);
 }).catch((err) => {

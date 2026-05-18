@@ -13,26 +13,30 @@ let globalContext: vscode.ExtensionContext;
 
 export async function activate(context: vscode.ExtensionContext) {
     globalContext = context;
-    outputChannel = vscode.window.createOutputChannel("Antigravity Link");
-    outputChannel.appendLine("🚀 Antigravity Link: Activating...");
+    outputChannel = vscode.window.createOutputChannel("Gravity Link");
+    outputChannel.appendLine("🚀 Gravity Link: Activating...");
 
     // Status Bar Item
     statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-    statusBarItem.command = "antigravity-link.showQR";
+    statusBarItem.command = "gravity-link.showQR";
     context.subscriptions.push(statusBarItem);
 
-    // Register Commands
-    context.subscriptions.push(
-        vscode.commands.registerCommand('antigravity-link.start', async () => {
-            await startServer(context);
-        }),
-        vscode.commands.registerCommand('antigravity-link.stop', async () => {
-            await stopServer();
-        }),
-        vscode.commands.registerCommand('antigravity-link.showQR', async () => {
-            await showQR();
-        }),
-        vscode.commands.registerCommand('antigravity-link.selectNetworkInterface', async () => {
+    // Register Commands (supporting both rebranded and legacy names)
+    const register = (legacyName: string, rebrandedName: string, handler: (...args: any[]) => any) => {
+        context.subscriptions.push(vscode.commands.registerCommand(legacyName, handler));
+        context.subscriptions.push(vscode.commands.registerCommand(rebrandedName, handler));
+    };
+
+    register('antigravity-link.start', 'gravity-link.start', async () => {
+        await startServer(context);
+    });
+    register('antigravity-link.stop', 'gravity-link.stop', async () => {
+        await stopServer();
+    });
+    register('antigravity-link.showQR', 'gravity-link.showQR', async () => {
+        await showQR();
+    });
+    register('antigravity-link.selectNetworkInterface', 'gravity-link.selectNetworkInterface', async () => {
             const interfaces = os.networkInterfaces();
             const candidates: { label: string; description?: string; addr: string }[] = [];
             
@@ -73,7 +77,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 
                 if (chosenIp !== undefined) {
                     const finalIp = chosenIp.trim();
-                    await vscode.workspace.getConfiguration('antigravityLink').update('preferredHost', finalIp, vscode.ConfigurationTarget.Global);
+                    await getLinkConfig().update('preferredHost', finalIp, vscode.ConfigurationTarget.Global);
                     if (finalIp) {
                         vscode.window.showInformationMessage(`Server IP/host set to ${finalIp}. Restart the server to apply.`);
                     } else {
@@ -81,11 +85,10 @@ export async function activate(context: vscode.ExtensionContext) {
                     }
                 }
             }
-        })
-    );
+        });
 
-    // Check Auto-Start (Legacy feature)
-    const config = vscode.workspace.getConfiguration('antigravityLink');
+    // Check Auto-Start (supporting both rebranded and legacy names)
+    const config = getLinkConfig();
     if (config.get('autoStart', false)) {
         await startServer(context, true);
     } else {
@@ -93,19 +96,28 @@ export async function activate(context: vscode.ExtensionContext) {
     }
 }
 
+function getLinkConfig(): vscode.WorkspaceConfiguration {
+    const newConfig = vscode.workspace.getConfiguration('gravityLink');
+    const oldConfig = vscode.workspace.getConfiguration('antigravityLink');
+    if (newConfig.get('port') === 3000 && oldConfig.get('port') !== 3000) {
+        return oldConfig;
+    }
+    return newConfig;
+}
+
 async function startServer(context: vscode.ExtensionContext, isAutoStart: boolean = false) {
     if (server) {
-        vscode.window.showInformationMessage("Antigravity Link server is already running.");
+        vscode.window.showInformationMessage("Gravity Link server is already running.");
         return;
     }
 
-    const config = vscode.workspace.getConfiguration('antigravityLink');
+    const config = getLinkConfig();
     let preferredHost = config.get<string>('preferredHost', '').trim();
 
     // If we don't have a configured IP, prompt the user to set it up once.
     if (!preferredHost) {
         const inputIp = await vscode.window.showInputBox({
-            prompt: "Enter the Tailscale IP (or Host IP) to use for the Antigravity Link server",
+            prompt: "Enter the Tailscale IP (or Host IP) to use for the Gravity Link server",
             placeHolder: "e.g. 100.115.92.10",
             value: preferredHost,
             ignoreFocusOut: true
@@ -199,14 +211,14 @@ async function startServer(context: vscode.ExtensionContext, isAutoStart: boolea
     } catch (e) {
         server = null;
         outputChannel.appendLine(`❌ Failed to start server: ${e}`);
-        vscode.window.showErrorMessage(`Antigravity Link failed to start: ${e}`);
+        vscode.window.showErrorMessage(`Gravity Link failed to start: ${e}`);
         updateStatusBar(false);
     }
 }
 
 async function stopServer() {
     if (!server) {
-        vscode.window.showInformationMessage("Antigravity Link server is not running.");
+        vscode.window.showInformationMessage("Gravity Link server is not running.");
         return;
     }
 
@@ -214,7 +226,7 @@ async function stopServer() {
         server.stop();
         server = null;
         outputChannel.appendLine("🛑 Server stopped.");
-        vscode.window.showInformationMessage("Antigravity Link server stopped.");
+        vscode.window.showInformationMessage("Gravity Link server stopped.");
         updateStatusBar(false);
     } catch (e) {
         vscode.window.showErrorMessage(`Failed to stop server: ${e}`);
@@ -250,8 +262,8 @@ async function showQR() {
 
         // Create Webview Panel
         const panel = vscode.window.createWebviewPanel(
-            'antigravityLinkQR',
-            'Antigravity Link QR',
+            'gravityLinkQR',
+            'Gravity Link QR',
             vscode.ViewColumn.One,
             {}
         );
@@ -275,7 +287,7 @@ async function showQR() {
             <body>
                 <h1>📱 Scan to Connect</h1>
                 <img src="${qrDataUrl}" width="300" height="300" />
-                <p>Connect your mobile device to control Antigravity.</p>
+                <p>Connect your mobile device to control Gravity.</p>
                 <p>URL: <span class="url">${displayUrl}</span></p>
                 ${tokenDisplay}
             </body>
@@ -290,13 +302,13 @@ async function showQR() {
 function updateStatusBar(running: boolean, port?: number) {
     if (running) {
         statusBarItem.text = `$(broadcast) Link: ${port}`;
-        statusBarItem.tooltip = "Antigravity Link Server Running - Click to Show QR";
-        statusBarItem.command = "antigravity-link.showQR";
+        statusBarItem.tooltip = "Gravity Link Server Running - Click to Show QR";
+        statusBarItem.command = "gravity-link.showQR";
         statusBarItem.show();
     } else {
         statusBarItem.text = `$(broadcast) Link: Off`;
-        statusBarItem.tooltip = "Antigravity Link Server Stopped - Click to Start";
-        statusBarItem.command = "antigravity-link.start";
+        statusBarItem.tooltip = "Gravity Link Server Stopped - Click to Start";
+        statusBarItem.command = "gravity-link.start";
         statusBarItem.show();
     }
 }
