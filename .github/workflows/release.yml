@@ -1,0 +1,60 @@
+name: Multi-Platform Standalone Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Bundle Client & Scripts
+        run: npm run bundle
+
+      - name: Run Typecheck
+        run: npm run typecheck
+
+      - name: Create Out Directory
+        run: mkdir -p out
+
+      - name: Compile Standalone Binaries
+        run: |
+          npx pkg . --targets node18-macos-x64,node18-macos-arm64,node18-linux-x64,node18-win-x64 --out-path out/
+
+      - name: Rename Binaries for Clean Release Names
+        run: |
+          mv out/antigravity-link-extension-macos-arm64 out/antigravity-link-arm64 || mv out/antigravity-link-extension-macos out/antigravity-link-arm64 || true
+          mv out/antigravity-link-extension-macos-x64 out/antigravity-link-x64 || true
+          mv out/antigravity-link-extension-linux-x64 out/antigravity-link-linux || mv out/antigravity-link-extension-linux out/antigravity-link-linux || true
+          mv out/antigravity-link-extension-win-x64.exe out/antigravity-link.exe || mv out/antigravity-link-extension-win.exe out/antigravity-link.exe || true
+          ls -la out/
+
+      - name: Upload Binaries to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            out/antigravity-link-arm64
+            out/antigravity-link-x64
+            out/antigravity-link-linux
+            out/antigravity-link.exe
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
