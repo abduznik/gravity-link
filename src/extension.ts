@@ -87,13 +87,13 @@ export async function activate(context: vscode.ExtensionContext) {
     // Check Auto-Start (Legacy feature)
     const config = vscode.workspace.getConfiguration('antigravityLink');
     if (config.get('autoStart', false)) {
-        await startServer(context);
+        await startServer(context, true);
     } else {
         updateStatusBar(false);
     }
 }
 
-async function startServer(context: vscode.ExtensionContext) {
+async function startServer(context: vscode.ExtensionContext, isAutoStart: boolean = false) {
     if (server) {
         vscode.window.showInformationMessage("Antigravity Link server is already running.");
         return;
@@ -102,25 +102,28 @@ async function startServer(context: vscode.ExtensionContext) {
     const config = vscode.workspace.getConfiguration('antigravityLink');
     let preferredHost = config.get<string>('preferredHost', '').trim();
 
-    // Text prompt to ask what IP to use, pre-filled with the saved preferred IP
-    const inputIp = await vscode.window.showInputBox({
-        prompt: "Enter the Tailscale IP (or Host IP) to use for the Antigravity Link server",
-        placeHolder: "e.g. 100.115.92.10",
-        value: preferredHost,
-        ignoreFocusOut: true
-    });
+    // If this is an auto-start on startup and we already have a configured IP,
+    // bypass the blocking popup for a seamless user experience. Otherwise, prompt the user.
+    if (!isAutoStart || !preferredHost) {
+        const inputIp = await vscode.window.showInputBox({
+            prompt: "Enter the Tailscale IP (or Host IP) to use for the Antigravity Link server",
+            placeHolder: "e.g. 100.115.92.10",
+            value: preferredHost,
+            ignoreFocusOut: true
+        });
 
-    if (inputIp === undefined) {
-        vscode.window.showWarningMessage("Server start cancelled. No IP address provided.");
-        return;
-    }
+        if (inputIp === undefined) {
+            vscode.window.showWarningMessage("Server start cancelled. No IP address provided.");
+            return;
+        }
 
-    preferredHost = inputIp.trim();
-    // Update settings globally so it is setup once
-    await config.update('preferredHost', preferredHost, vscode.ConfigurationTarget.Global);
+        preferredHost = inputIp.trim();
+        // Update settings globally so it is setup once
+        await config.update('preferredHost', preferredHost, vscode.ConfigurationTarget.Global);
 
-    if (!preferredHost) {
-        vscode.window.showWarningMessage("Starting server with default local IP interface since no preferred IP was entered.");
+        if (!preferredHost) {
+            vscode.window.showWarningMessage("Starting server with default local IP interface since no preferred IP was entered.");
+        }
     }
 
     const port = config.get<number>('port', 3000);
