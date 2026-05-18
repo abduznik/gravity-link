@@ -1,4 +1,5 @@
-import { AntigravityServer } from './server/index';
+import { AntigravityServer } from '../core/server/index';
+import { ServerConfig } from '../core/config';
 import * as path from 'path';
 
 // Parse CLI arguments
@@ -31,12 +32,18 @@ console.log(`HTTPS: ${useHttps ? 'Enabled' : 'Disabled'}`);
 console.log(`Mode: Tokenless`);
 console.log(`-----------------------------------------------`);
 
-const server = new AntigravityServer(
+const serverConfig: ServerConfig = {
     port,
+    host,
+    useHttps,
+    strictWorkbenchOnly: true, // standalone default
+    includeFallbackTargets: false // standalone default
+};
+
+const server = new AntigravityServer(
+    serverConfig,
     extensionPath,
     workspaceRoot,
-    useHttps,
-    host,
     undefined, // no primarySendFn (falls back to CDP DOM injection)
     async () => '', // no getActiveCascadeIdFn
     (msg) => console.log(msg) // log directly to console

@@ -1,6 +1,6 @@
 import assert from 'assert';
-import { injectMessage } from '../services/antigravity';
-import { CDPConnection, CDPContext } from '../types';
+import { injectMessage } from '../core/services/antigravity';
+import { CDPConnection, CDPContext } from '../core/types';
 
 function makeFakeCall(mode: 'success' | 'fail' | 'enter_keypress') {
     return async (method: string, params: any) => {

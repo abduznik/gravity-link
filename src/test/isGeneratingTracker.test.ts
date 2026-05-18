@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { IsGeneratingTracker } from '../server/isGeneratingTracker';
+import { IsGeneratingTracker } from '../core/server/isGeneratingTracker';
 
 const WINDOW = 10_000;
 const t0 = 1_000_000;

@@ -1,6 +1,6 @@
 import assert from 'assert';
-import { injectFile } from '../services/antigravity';
-import { CDPConnection, CDPContext } from '../types';
+import { injectFile } from '../core/services/antigravity';
+import { CDPConnection, CDPContext } from '../core/types';
 
 function makeFakeCall() {
     const responses: Record<string, any> = {

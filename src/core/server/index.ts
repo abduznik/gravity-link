@@ -13,6 +13,7 @@ import { CDPConnection, Snapshot, CDPInfo } from '../types';
 import { authMiddleware } from '../middleware/auth';
 import { securityMiddleware } from '../middleware/security';
 import { IsGeneratingTracker } from './isGeneratingTracker';
+import { ServerConfig } from '../config';
 
 // Config defaults (aligned with root server)
 const MAX_UPLOAD_SIZE_MB = 50;
@@ -70,23 +71,26 @@ export class AntigravityServer {
     }
 
     constructor(
-        port: number,
+        config: ServerConfig,
         extensionPath: string,
         workspaceRoot?: string,
-        useHttps = false,
-        preferredHost = '',
         primarySendFn?: (message: string) => Promise<boolean>,
         getActiveCascadeIdFn?: () => Promise<string>,
         logFn?: (msg: string) => void
     ) {
-        this.port = port;
-        this.useHttps = useHttps;
-        this.preferredHost = preferredHost.trim();
+        this.port = config.port;
+        this.useHttps = config.useHttps ?? true;
+        this.preferredHost = (config.host || '').trim();
         this.primarySendFn = primarySendFn || null;
         this.getActiveCascadeIdFn = getActiveCascadeIdFn || null;
         this.logFn = logFn;
         this.extensionPath = extensionPath;
         this.app = express();
+
+        // Propagate config fields to environment variables so cdp.ts can read them seamlessly
+        process.env.AG_STRICT_WORKBENCH_ONLY = (config.strictWorkbenchOnly ?? true) ? 'true' : 'false';
+        process.env.AG_INCLUDE_FALLBACK_TARGETS = (config.includeFallbackTargets ?? false) ? 'true' : 'false';
+
         // Prefer workspace root uploads/public (matches npm run dev), fall back to extension path
         const rootBase = workspaceRoot || process.cwd();
         this.workspaceRoot = rootBase;
@@ -684,13 +688,13 @@ export class AntigravityServer {
         router.get('/file-content', (req, res) => {
             const relPath = String(req.query.path || '').trim();
             if (!relPath) return res.status(400).json({ error: 'Missing path parameter' });
-            
+
             // Resolve path safely under workspaceRoot
             const safePath = path.resolve(this.workspaceRoot, relPath);
             if (!safePath.startsWith(this.workspaceRoot)) {
                 return res.status(403).json({ error: 'Access denied: outside of workspace root' });
             }
-            
+
             try {
                 if (!fs.existsSync(safePath)) {
                     return res.status(404).json({ error: 'File not found' });
@@ -854,46 +858,46 @@ export class AntigravityServer {
             // The LS RPC returns 200/{} (empty body) when the cascade ID is wrong — a silent no-op.
             // The DOM click with the tooltip-id selector is reliable and confirmed from ag_bridge.
             if (cdpForStop) {
-                    // Ground-truth selector from ag_bridge poke.mjs (2026-03-28).
-                    // data-tooltip-id="input-send-button-cancel-tooltip" is the real cancel button.
-                    const CANCEL_CLICK = `(() => {
-                        try {
-                            const btn = document.querySelector('[data-tooltip-id="input-send-button-cancel-tooltip"]');
-                            if (!btn || btn.offsetParent === null) {
-                                return { found: false, frameUrl: window.location.href };
-                            }
-                            btn.click();
-                            return {
-                                found: true,
-                                aria: btn.getAttribute('aria-label') || '',
-                                tooltipId: btn.getAttribute('data-tooltip-id') || '',
-                                cls: btn.className.toString().slice(0, 80),
-                                frameUrl: window.location.href
-                            };
-                        } catch(e) {
-                            return { found: false, error: String(e) };
+                // Ground-truth selector from ag_bridge poke.mjs (2026-03-28).
+                // data-tooltip-id="input-send-button-cancel-tooltip" is the real cancel button.
+                const CANCEL_CLICK = `(() => {
+                    try {
+                        const btn = document.querySelector('[data-tooltip-id="input-send-button-cancel-tooltip"]');
+                        if (!btn || btn.offsetParent === null) {
+                            return { found: false, frameUrl: window.location.href };
                         }
-                    })()`;
-
-                    const domResults: object[] = [];
-                    const allContextIds: Array<number | null> = [null, ...cdpForStop.contexts.map(c => c.id)];
-                    for (const ctxId of allContextIds) {
-                        try {
-                            const params: Record<string, unknown> = { expression: CANCEL_CLICK, returnByValue: true };
-                            if (ctxId !== null) params.contextId = ctxId;
-                            const result = await cdpForStop.call("Runtime.evaluate", params);
-                            const val = result?.result?.value;
-                            if (val) domResults.push({ ctxId, ...val });
-                            if (val?.found) {
-                                console.log('[STOP] cancel click in context', ctxId ?? 'main', JSON.stringify({ tooltipId: val.tooltipId, aria: val.aria }));
-                                rpcOk = true;
-                                break;
-                            }
-                        } catch (err) {
-                            domResults.push({ ctxId, error: (err as Error).message });
-                        }
+                        btn.click();
+                        return {
+                            found: true,
+                            aria: btn.getAttribute('aria-label') || '',
+                            tooltipId: btn.getAttribute('data-tooltip-id') || '',
+                            cls: btn.className.toString().slice(0, 80),
+                            frameUrl: window.location.href
+                        };
+                    } catch(e) {
+                        return { found: false, error: String(e) };
                     }
-                    stopLog.domResults = domResults;
+                })()`;
+
+                const domResults: object[] = [];
+                const allContextIds: Array<number | null> = [null, ...cdpForStop.contexts.map(c => c.id)];
+                for (const ctxId of allContextIds) {
+                    try {
+                        const params: Record<string, unknown> = { expression: CANCEL_CLICK, returnByValue: true };
+                        if (ctxId !== null) params.contextId = ctxId;
+                        const result = await cdpForStop.call("Runtime.evaluate", params);
+                        const val = result?.result?.value;
+                        if (val) domResults.push({ ctxId, ...val });
+                        if (val?.found) {
+                            console.log('[STOP] cancel click in context', ctxId ?? 'main', JSON.stringify({ tooltipId: val.tooltipId, aria: val.aria }));
+                            rpcOk = true;
+                            break;
+                        }
+                    } catch (err) {
+                        domResults.push({ ctxId, error: (err as Error).message });
+                    }
+                }
+                stopLog.domResults = domResults;
             }
 
             // Always write the full stop log so every attempt is self-documenting
@@ -1175,6 +1179,7 @@ export class AntigravityServer {
                                     Array.from(b.attributes)
                                         .filter(a => a.name.startsWith('data-') || ['role','type','disabled'].includes(a.name))
                                         .map(a => [a.name, a.value.slice(0, 60)])
+                                // @ts-ignore
                                 ),
                                 visible: r.width > 0 && r.height > 0,
                                 rect: { x: Math.round(r.left), y: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height) }

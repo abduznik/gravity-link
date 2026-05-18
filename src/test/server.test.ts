@@ -1,7 +1,8 @@
 import { expect } from 'chai';
 import path from 'path';
 import http from 'http';
-import { AntigravityServer } from '../server/index';
+import { AntigravityServer } from '../core/server/index';
+import { ServerConfig } from '../core/config';
 
 describe('AntigravityServer', () => {
     let server: AntigravityServer;
@@ -10,7 +11,11 @@ describe('AntigravityServer', () => {
     const workspaceRoot = path.join(__dirname, '../../../');
 
     before(async () => {
-        server = new AntigravityServer(testPort, extensionPath, workspaceRoot, false); // HTTP for test
+        const serverConfig: ServerConfig = {
+            port: testPort,
+            useHttps: false // HTTP for test
+        };
+        server = new AntigravityServer(serverConfig, extensionPath, workspaceRoot);
     });
 
     after(() => {

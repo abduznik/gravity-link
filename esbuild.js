@@ -4,7 +4,7 @@ const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
 
 const buildOptions = {
-    entryPoints: ['src/extension.ts'],
+    entryPoints: ['src/extension/index.ts'],
     bundle: true,
     outfile: 'out/extension.js',
     platform: 'node',
@@ -17,7 +17,7 @@ const buildOptions = {
 };
 
 const standaloneOptions = {
-    entryPoints: ['src/standalone.ts'],
+    entryPoints: ['src/standalone/index.ts'],
     bundle: true,
     outfile: 'out/standalone.js',
     platform: 'node',

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
-import { AntigravityServer } from './server/index';
-import { getActiveCascadeIdFromLs } from './services/ls-discovery';
+import { AntigravityServer } from '../core/server/index';
+import { ServerConfig } from '../core/config';
+import { getActiveCascadeIdFromLs } from '../core/services/ls-discovery';
 import qrcode from 'qrcode';
 import os from 'os';
 
@@ -15,6 +16,21 @@ export async function activate(context: vscode.ExtensionContext) {
     globalContext = context;
     outputChannel = vscode.window.createOutputChannel("Gravity Link");
     outputChannel.appendLine("🚀 Gravity Link: Activating...");
+
+    // Check for legacy settings to display migration notice
+    const oldConfig = vscode.workspace.getConfiguration('antigravityLink');
+    if (
+        oldConfig.has('port') ||
+        oldConfig.has('preferredHost') ||
+        oldConfig.has('useHttps') ||
+        oldConfig.has('strictWorkbenchOnly') ||
+        oldConfig.has('includeFallbackTargets') ||
+        oldConfig.has('autoStart')
+    ) {
+        vscode.window.showWarningMessage(
+            "Gravity Link: Legacy 'antigravityLink' settings detected. Please migrate your settings to 'gravityLink'!"
+        );
+    }
 
     // Status Bar Item
     statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
@@ -37,72 +53,64 @@ export async function activate(context: vscode.ExtensionContext) {
         await showQR();
     });
     register('antigravity-link.selectNetworkInterface', 'gravity-link.selectNetworkInterface', async () => {
-            const interfaces = os.networkInterfaces();
-            const candidates: { label: string; description?: string; addr: string }[] = [];
-            
-            // Add custom IP option
-            candidates.push({
-                label: "$(pencil) Enter custom/Tailscale IP manually...",
-                description: "Type your Tailscale IP or any other custom IP/host address",
-                addr: "custom"
-            });
-
-            for (const [name, addrs] of Object.entries(interfaces)) {
-                for (const addr of addrs || []) {
-                    if (!addr.internal && addr.family === 'IPv4') {
-                        candidates.push({
-                            label: addr.address,
-                            description: `${name} — ${addr.address}`,
-                            addr: addr.address
-                        });
-                    }
-                }
-            }
-
-            const pick = await vscode.window.showQuickPick(candidates, {
-                placeHolder: 'Select a network interface or enter a custom IP manually'
-            });
-
-            if (pick) {
-                let chosenIp: string | undefined = pick.addr;
-                if (chosenIp === 'custom') {
-                    const currentHost = vscode.workspace.getConfiguration('antigravityLink').get<string>('preferredHost', '');
-                    chosenIp = await vscode.window.showInputBox({
-                        prompt: "Enter custom/Tailscale IP address",
-                        placeHolder: "e.g. 100.115.92.10",
-                        value: currentHost,
-                        ignoreFocusOut: true
-                    });
-                }
-                
-                if (chosenIp !== undefined) {
-                    const finalIp = chosenIp.trim();
-                    await getLinkConfig().update('preferredHost', finalIp, vscode.ConfigurationTarget.Global);
-                    if (finalIp) {
-                        vscode.window.showInformationMessage(`Server IP/host set to ${finalIp}. Restart the server to apply.`);
-                    } else {
-                        vscode.window.showInformationMessage(`Preferred IP cleared. Restart the server to use default auto-detection.`);
-                    }
-                }
-            }
+        const interfaces = os.networkInterfaces();
+        const candidates: { label: string; description?: string; addr: string }[] = [];
+        
+        // Add custom IP option
+        candidates.push({
+            label: "$(pencil) Enter custom/Tailscale IP manually...",
+            description: "Type your Tailscale IP or any other custom IP/host address",
+            addr: "custom"
         });
 
+        for (const [name, addrs] of Object.entries(interfaces)) {
+            for (const addr of addrs || []) {
+                if (!addr.internal && addr.family === 'IPv4') {
+                    candidates.push({
+                        label: addr.address,
+                        description: `${name} — ${addr.address}`,
+                        addr: addr.address
+                    });
+                }
+            }
+        }
+
+        const pick = await vscode.window.showQuickPick(candidates, {
+            placeHolder: 'Select a network interface or enter a custom IP manually'
+        });
+
+        if (pick) {
+            let chosenIp: string | undefined = pick.addr;
+            if (chosenIp === 'custom') {
+                const currentHost = vscode.workspace.getConfiguration('gravityLink').get<string>('preferredHost', '');
+                chosenIp = await vscode.window.showInputBox({
+                    prompt: "Enter custom/Tailscale IP address",
+                    placeHolder: "e.g. 100.115.92.10",
+                    value: currentHost,
+                    ignoreFocusOut: true
+                });
+            }
+            
+            if (chosenIp !== undefined) {
+                const finalIp = chosenIp.trim();
+                const config = vscode.workspace.getConfiguration('gravityLink');
+                await config.update('preferredHost', finalIp, vscode.ConfigurationTarget.Global);
+                if (finalIp) {
+                    vscode.window.showInformationMessage(`Server IP/host set to ${finalIp}. Restart the server to apply.`);
+                } else {
+                    vscode.window.showInformationMessage(`Preferred IP cleared. Restart the server to use default auto-detection.`);
+                }
+            }
+        }
+    });
+
     // Check Auto-Start (supporting both rebranded and legacy names)
-    const config = getLinkConfig();
+    const config = vscode.workspace.getConfiguration('gravityLink');
     if (config.get('autoStart', false)) {
         await startServer(context, true);
     } else {
         updateStatusBar(false);
     }
-}
-
-function getLinkConfig(): vscode.WorkspaceConfiguration {
-    const newConfig = vscode.workspace.getConfiguration('gravityLink');
-    const oldConfig = vscode.workspace.getConfiguration('antigravityLink');
-    if (newConfig.get('port') === 3000 && oldConfig.get('port') !== 3000) {
-        return oldConfig;
-    }
-    return newConfig;
 }
 
 async function startServer(context: vscode.ExtensionContext, isAutoStart: boolean = false) {
@@ -111,7 +119,7 @@ async function startServer(context: vscode.ExtensionContext, isAutoStart: boolea
         return;
     }
 
-    const config = getLinkConfig();
+    const config = vscode.workspace.getConfiguration('gravityLink');
     let preferredHost = config.get<string>('preferredHost', '').trim();
 
     // If we don't have a configured IP, prompt the user to set it up once.
@@ -145,8 +153,13 @@ async function startServer(context: vscode.ExtensionContext, isAutoStart: boolea
     const includeFallbackTargets = config.get<boolean>('includeFallbackTargets', false);
     const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 
-    process.env.AG_STRICT_WORKBENCH_ONLY = strictWorkbenchOnly ? 'true' : 'false';
-    process.env.AG_INCLUDE_FALLBACK_TARGETS = includeFallbackTargets ? 'true' : 'false';
+    const serverConfig: ServerConfig = {
+        port,
+        host: preferredHost,
+        useHttps,
+        strictWorkbenchOnly,
+        includeFallbackTargets
+    };
 
     // Create primary send function using VS Code commands (more reliable than CDP DOM injection)
     const primarySendFn = async (message: string): Promise<boolean> => {
@@ -181,11 +194,9 @@ async function startServer(context: vscode.ExtensionContext, isAutoStart: boolea
 
     // Start the server
     const newServer = new AntigravityServer(
-        port,
+        serverConfig,
         context.extensionPath,
         workspaceRoot,
-        useHttps,
-        preferredHost,
         primarySendFn,
         getActiveCascadeIdFn,
         (msg: string) => {

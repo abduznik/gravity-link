@@ -6,9 +6,18 @@
 import assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+
+let currentDir: string;
+try {
+    currentDir = __dirname;
+} catch {
+    const metaUrl = new Function('return import.meta.url')();
+    currentDir = path.dirname(fileURLToPath(metaUrl));
+}
 
 const SRC = fs.readFileSync(
-    path.join(__dirname, '../../src/services/antigravity.ts'),
+    path.join(currentDir, '../../src/core/services/antigravity.ts'),
     'utf8'
 ).replace(/\r\n/g, '\n');
 

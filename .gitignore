@@ -8,3 +8,5 @@ key.pem
 *.vsix
 *.log
 .DS_Store
+ag-stop-probe.json
+
