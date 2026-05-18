@@ -73,7 +73,7 @@ export class AntigravityServer {
         port: number,
         extensionPath: string,
         workspaceRoot?: string,
-        useHttps = true,
+        useHttps = false,
         preferredHost = '',
         primarySendFn?: (message: string) => Promise<boolean>,
         getActiveCascadeIdFn?: () => Promise<string>,
@@ -90,9 +90,8 @@ export class AntigravityServer {
         // Prefer workspace root uploads/public (matches npm run dev), fall back to extension path
         const rootBase = workspaceRoot || process.cwd();
         this.workspaceRoot = rootBase;
-        const rootUploads = path.join(rootBase, 'uploads');
         const rootPublic = path.join(rootBase, 'public');
-        this.uploadsDir = fs.existsSync(rootUploads) ? rootUploads : path.join(extensionPath, 'uploads');
+        this.uploadsDir = path.join(rootBase, 'uploads');
         this.publicDir = fs.existsSync(rootPublic) ? rootPublic : path.join(extensionPath, 'public');
         this.state = {
             cdpConnections: [],
@@ -109,7 +108,7 @@ export class AntigravityServer {
             lastBroadcastIsGenerating: false
         };
         this.useAuth = false;
-        this.authToken = this.loadOrCreateToken(extensionPath);
+        this.authToken = this.useAuth ? this.loadOrCreateToken(extensionPath) : 'tokenless';
 
         if (!fs.existsSync(this.uploadsDir)) {
             fs.mkdirSync(this.uploadsDir, { recursive: true });

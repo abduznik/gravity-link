@@ -16,14 +16,32 @@ const buildOptions = {
     external: ['vscode']
 };
 
+const standaloneOptions = {
+    entryPoints: ['src/standalone.ts'],
+    bundle: true,
+    outfile: 'out/standalone.js',
+    platform: 'node',
+    format: 'cjs',
+    target: 'node18',
+    sourcemap: true,
+    minify: production,
+    logLevel: 'info',
+    external: []
+};
+
 async function run() {
     if (watch) {
-        const ctx = await esbuild.context(buildOptions);
-        await ctx.watch();
+        const ctx1 = await esbuild.context(buildOptions);
+        const ctx2 = await esbuild.context(standaloneOptions);
+        await ctx1.watch();
+        await ctx2.watch();
         console.log('[esbuild] watching...');
         return;
     }
-    await esbuild.build(buildOptions);
+    await Promise.all([
+        esbuild.build(buildOptions),
+        esbuild.build(standaloneOptions)
+    ]);
 }
 
 run().catch((err) => {
