@@ -1381,10 +1381,43 @@
             return label.split(' ').slice(0, 2).join(' ').slice(0, 12);
         }
 
+        function isArrowOrNavigationText(value) {
+            const t = normalizeControlText(value).trim().toLowerCase();
+            if (!t) return false;
+            return (
+                /^[←→↔↕◀▶◁▷▲▼]|[<>«»‹›]\s*$/.test(t) ||
+                /(chevron|arrow|navigate|prev|next)/i.test(t) ||
+                t === 'left' || t === 'right'
+            );
+        }
+
+        function isArrowOrNavigationButton(el) {
+            const text = String(el.innerText || el.textContent || '').trim();
+            const aria = String(el.getAttribute('aria-label') || el.getAttribute('title') || '').trim();
+            if (isArrowOrNavigationText(text) || isArrowOrNavigationText(aria)) {
+                return true;
+            }
+            
+            // Check inner element text (like google symbol icons)
+            let hasGoogleSymbolArrow = false;
+            const googleSymbols = el.querySelectorAll('.google-symbols');
+            googleSymbols.forEach(sym => {
+                const symText = String(sym.innerText || sym.textContent || '').trim();
+                if (isArrowOrNavigationText(symText)) {
+                    hasGoogleSymbolArrow = true;
+                }
+            });
+            return hasGoogleSymbolArrow;
+        }
+
         function applyIconFallbacks(root) {
             if (!root) return;
             const targets = root.querySelectorAll('button, [role="button"]');
             targets.forEach((el) => {
+                if (isArrowOrNavigationButton(el)) {
+                    el.style.setProperty('display', 'none', 'important');
+                    return;
+                }
                 const text = normalizeInlineText(el.innerText || el.textContent || '');
                 const aria = normalizeInlineText(el.getAttribute('aria-label') || el.getAttribute('title') || '');
                 const hasGraphicChild = !!el.querySelector('svg, img, [class*="icon"], [class*="codicon"]');
@@ -3207,7 +3240,7 @@
                     .map((btn) => ({
                         text: normalizeControlText(btn.innerText || btn.textContent || '')
                     }))
-                    .filter((entry) => entry.text && entry.text.length <= 96 && !isCommandPaletteOption(entry.text));
+                    .filter((entry) => entry.text && entry.text.length <= 96 && !isCommandPaletteOption(entry.text) && !isArrowOrNavigationText(entry.text));
 
                 if (!modeControl) {
                     const foundMode = candidates.find((entry) => isModeLikeLabel(entry.text) && !isModelLikeLabel(entry.text));
@@ -3329,7 +3362,7 @@
                 return Array.from(rootEl.querySelectorAll(itemSels.join(', ')))
                     .map((item) => ({ text: normalizeItemText(item), selector: '' }))
                     .filter((it) => {
-                        if (!it.text || it.text.length > 110 || isCommandPaletteOption(it.text)) return false;
+                        if (!it.text || it.text.length > 110 || isCommandPaletteOption(it.text) || isArrowOrNavigationText(it.text)) return false;
                         const key = it.text.toLowerCase();
                         if (seen.has(key)) return false;
                         seen.add(key);
