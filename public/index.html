@@ -1242,7 +1242,7 @@
         let ws = null;
         let pendingMessage = null; // Track message waiting for visual confirmation
         let initialScrollDone = false;
-        let authToken = localStorage.getItem('ag_auth_token') || '';
+        let authToken = localStorage.getItem('ag_auth_token') || 'tokenless';
         const sendBtnOriginalIcon = sendBtn.innerHTML;
         let suppressReconnectOnce = false;
         let mirrorHost = null;

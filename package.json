@@ -78,7 +78,7 @@
                 "antigravityLink.preferredHost": {
                     "type": "string",
                     "default": "",
-                    "description": "%config.preferredHost.description%"
+                    "description": "Preferred host IP address (e.g. your Tailscale IP) to bind and advertise."
                 },
                 "antigravityLink.preferredNetworkInterface": {
                     "type": "string",

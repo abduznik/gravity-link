@@ -34,24 +34,52 @@ export async function activate(context: vscode.ExtensionContext) {
         }),
         vscode.commands.registerCommand('antigravity-link.selectNetworkInterface', async () => {
             const interfaces = os.networkInterfaces();
-            const candidates: { label: string; addr: string }[] = [];
+            const candidates: { label: string; description?: string; addr: string }[] = [];
+            
+            // Add custom IP option
+            candidates.push({
+                label: "$(pencil) Enter custom/Tailscale IP manually...",
+                description: "Type your Tailscale IP or any other custom IP/host address",
+                addr: "custom"
+            });
+
             for (const [name, addrs] of Object.entries(interfaces)) {
                 for (const addr of addrs || []) {
                     if (!addr.internal && addr.family === 'IPv4') {
-                        candidates.push({ label: `${name} — ${addr.address}`, addr: addr.address });
+                        candidates.push({
+                            label: addr.address,
+                            description: `${name} — ${addr.address}`,
+                            addr: addr.address
+                        });
                     }
                 }
             }
-            if (candidates.length === 0) {
-                vscode.window.showWarningMessage('No external IPv4 interfaces found.');
-                return;
-            }
-            const pick = await vscode.window.showQuickPick(candidates.map(c => ({ label: c.addr, description: c.label })), {
-                placeHolder: 'Select the network interface to advertise in the QR code'
+
+            const pick = await vscode.window.showQuickPick(candidates, {
+                placeHolder: 'Select a network interface or enter a custom IP manually'
             });
+
             if (pick) {
-                await vscode.workspace.getConfiguration('antigravityLink').update('preferredHost', pick.label, vscode.ConfigurationTarget.Global);
-                vscode.window.showInformationMessage(`Network interface set to ${pick.label}. Restart the server to apply.`);
+                let chosenIp: string | undefined = pick.addr;
+                if (chosenIp === 'custom') {
+                    const currentHost = vscode.workspace.getConfiguration('antigravityLink').get<string>('preferredHost', '');
+                    chosenIp = await vscode.window.showInputBox({
+                        prompt: "Enter custom/Tailscale IP address",
+                        placeHolder: "e.g. 100.115.92.10",
+                        value: currentHost,
+                        ignoreFocusOut: true
+                    });
+                }
+                
+                if (chosenIp !== undefined) {
+                    const finalIp = chosenIp.trim();
+                    await vscode.workspace.getConfiguration('antigravityLink').update('preferredHost', finalIp, vscode.ConfigurationTarget.Global);
+                    if (finalIp) {
+                        vscode.window.showInformationMessage(`Server IP/host set to ${finalIp}. Restart the server to apply.`);
+                    } else {
+                        vscode.window.showInformationMessage(`Preferred IP cleared. Restart the server to use default auto-detection.`);
+                    }
+                }
             }
         })
     );
@@ -72,9 +100,31 @@ async function startServer(context: vscode.ExtensionContext) {
     }
 
     const config = vscode.workspace.getConfiguration('antigravityLink');
+    let preferredHost = config.get<string>('preferredHost', '').trim();
+
+    // Text prompt to ask what IP to use, pre-filled with the saved preferred IP
+    const inputIp = await vscode.window.showInputBox({
+        prompt: "Enter the Tailscale IP (or Host IP) to use for the Antigravity Link server",
+        placeHolder: "e.g. 100.115.92.10",
+        value: preferredHost,
+        ignoreFocusOut: true
+    });
+
+    if (inputIp === undefined) {
+        vscode.window.showWarningMessage("Server start cancelled. No IP address provided.");
+        return;
+    }
+
+    preferredHost = inputIp.trim();
+    // Update settings globally so it is setup once
+    await config.update('preferredHost', preferredHost, vscode.ConfigurationTarget.Global);
+
+    if (!preferredHost) {
+        vscode.window.showWarningMessage("Starting server with default local IP interface since no preferred IP was entered.");
+    }
+
     const port = config.get<number>('port', 3000);
     const useHttps = config.get<boolean>('useHttps', true);
-    const preferredHost = config.get<string>('preferredHost', '').trim();
     const strictWorkbenchOnly = config.get<boolean>('strictWorkbenchOnly', true);
     const includeFallbackTargets = config.get<boolean>('includeFallbackTargets', false);
     const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
@@ -172,6 +222,7 @@ async function showQR() {
         const secureUrl = server.secureUrl;
         const localUrl = server.localUrl;
         const token = (server as any).token || '';
+        const isTokenless = (server as any).isTokenless;
 
         console.log(`[Extension] showQR: secureUrl="${secureUrl}", localUrl="${localUrl}"`);
         outputChannel.appendLine(`[Extension] Generating QR for: ${secureUrl || localUrl}`);
@@ -193,6 +244,10 @@ async function showQR() {
             {}
         );
 
+        const tokenDisplay = isTokenless
+            ? `<p>Token: <span class="url">None (Tokenless)</span></p>`
+            : `<p>Token: <span class="url">${token}</span></p>`;
+
         panel.webview.html = `
             <!DOCTYPE html>
             <html>
@@ -210,7 +265,7 @@ async function showQR() {
                 <img src="${qrDataUrl}" width="300" height="300" />
                 <p>Connect your mobile device to control Antigravity.</p>
                 <p>URL: <span class="url">${displayUrl}</span></p>
-                <p>Token: <span class="url">${token}</span></p>
+                ${tokenDisplay}
             </body>
             </html>
         `;

@@ -88,7 +88,7 @@ export class AntigravityServer {
             lastCdpInitAttemptAt: 0,
             lastBroadcastIsGenerating: false
         };
-        this.useAuth = true;
+        this.useAuth = false;
         this.authToken = this.loadOrCreateToken(extensionPath);
 
         if (!fs.existsSync(this.uploadsDir)) {
@@ -102,6 +102,7 @@ export class AntigravityServer {
     public get localUrl() { return this._localUrl; }
     public get secureUrl() { return this._secureUrl; }
     public get token() { return this.authToken; }
+    public get isTokenless() { return !this.useAuth; }
 
     private loadOrCreateToken(basePath: string): string {
         const tokenPath = path.join(basePath, TOKEN_FILENAME);
@@ -541,7 +542,7 @@ export class AntigravityServer {
     }
 
     private pickBestLocalIp(interfaces: NodeJS.Dict<os.NetworkInterfaceInfo[]>): string {
-        if (this.preferredHost && this.isPrivateIPv4(this.preferredHost)) return this.preferredHost;
+        if (this.preferredHost) return this.preferredHost;
 
         const candidates: { name: string; addr: string }[] = [];
         for (const name of Object.keys(interfaces)) {
