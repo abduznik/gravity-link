@@ -34,7 +34,7 @@ Run the native compiled binary on your preferred port and advertise your local I
 
 ```bash
 # Run Apple Silicon binary on port 3002 and Tailscale IP
-./out/antigravity-link-extension-arm64 --port 3002 --host 100.100.51.6
+./out/antigravity-link-extension-arm64 --port 3002 --host <YOUR_IP>
 ```
 
 ### Options
@@ -51,7 +51,7 @@ Once started, open your mobile browser or scan the QR code to navigate to:
 
 ## How to Compile / Build from Source
 
-To bundle the UI code and package the whole project into self-contained macOS standalone binaries:
+To bundle the UI code and package the whole project into self-contained multi-platform standalone binaries:
 
 1. **Install dependencies**:
    ```bash
@@ -63,13 +63,17 @@ To bundle the UI code and package the whole project into self-contained macOS st
    npm run bundle
    ```
 
-3. **Pack into native macOS binaries**:
+3. **Pack into native multi-platform binaries**:
    Use the `pkg` tool to compile the standalone binary (the compiled executables package the HTML and asset files internally in `/snapshot` assets automatically):
    ```bash
-   npx pkg . --targets node18-macos-x64,node18-macos-arm64 --out-path out/
+   npx pkg . --targets node18-macos-x64,node18-macos-arm64,node18-linux-x64,node18-win-x64 --out-path out/
    ```
 
-Outputs will be saved in `out/antigravity-link-extension-x64` (Intel) and `out/antigravity-link-extension-arm64` (Apple Silicon).
+Outputs will be saved in `out/` as:
+- `antigravity-link-extension-arm64` (Apple Silicon macOS)
+- `antigravity-link-extension-x64` (Intel macOS)
+- `antigravity-link-extension-linux` (Linux x64)
+- `antigravity-link-extension.exe` (Windows x64)
 
 ---
 

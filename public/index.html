@@ -2679,13 +2679,6 @@
         async function forwardSnapshotClick(e) {
             if (!authToken) return;
 
-            // During generation, ignore click forwarding to the IDE to prevent accidental triggers,
-            // but let the user interact with the screen normally (copying text, scrolling, etc.)
-            // without cancelling the agent. The agent will only stop if they tap the Stop button/chip.
-            if (lastSnapshotData?.isGenerating) {
-                return;
-            }
-
             let target = e.target;
             if (!target || !(target instanceof Element)) return;
             if (target.id === 'snapshotHost') return;
@@ -2725,6 +2718,13 @@
                 } catch (err) {
                     showCodePreview(fileToPreview, `Failed to connect to companion server.\n\nError: ${err.message}`);
                 }
+                return;
+            }
+
+            // During generation, ignore click forwarding to the IDE to prevent accidental triggers,
+            // but let the user interact with the screen normally (copying text, scrolling, etc.)
+            // without cancelling the agent. The agent will only stop if they tap the Stop button/chip.
+            if (lastSnapshotData?.isGenerating) {
                 return;
             }
 
