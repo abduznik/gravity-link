@@ -102,9 +102,8 @@ async function startServer(context: vscode.ExtensionContext, isAutoStart: boolea
     const config = vscode.workspace.getConfiguration('antigravityLink');
     let preferredHost = config.get<string>('preferredHost', '').trim();
 
-    // If this is an auto-start on startup and we already have a configured IP,
-    // bypass the blocking popup for a seamless user experience. Otherwise, prompt the user.
-    if (!isAutoStart || !preferredHost) {
+    // If we don't have a configured IP, prompt the user to set it up once.
+    if (!preferredHost) {
         const inputIp = await vscode.window.showInputBox({
             prompt: "Enter the Tailscale IP (or Host IP) to use for the Antigravity Link server",
             placeHolder: "e.g. 100.115.92.10",
@@ -125,6 +124,8 @@ async function startServer(context: vscode.ExtensionContext, isAutoStart: boolea
             vscode.window.showWarningMessage("Starting server with default local IP interface since no preferred IP was entered.");
         }
     }
+
+    outputChannel.appendLine(`[Extension] Starting server with preferredHost: "${preferredHost}"`);
 
     const port = config.get<number>('port', 3000);
     const useHttps = config.get<boolean>('useHttps', true);

@@ -117,6 +117,7 @@ export class AntigravityServer {
 
         this.configureMiddleware();
         this.configureRoutes();
+        this.log(`[Server] Instantiated. preferredHost="${this.preferredHost}"`);
     }
 
     public get localUrl() { return this._localUrl; }
@@ -566,7 +567,10 @@ export class AntigravityServer {
     }
 
     private pickBestLocalIp(interfaces: NodeJS.Dict<os.NetworkInterfaceInfo[]>): string {
-        if (this.preferredHost) return this.preferredHost;
+        if (this.preferredHost) {
+            this.log(`[Server] pickBestLocalIp returning preferredHost: "${this.preferredHost}"`);
+            return this.preferredHost;
+        }
 
         const candidates: { name: string; addr: string }[] = [];
         for (const name of Object.keys(interfaces)) {
@@ -1260,7 +1264,9 @@ export class AntigravityServer {
 
                 this.server.on('error', (e) => reject(e));
 
-                this.server.listen(this.port, '0.0.0.0', async () => {
+                const bindHost = this.preferredHost || '0.0.0.0';
+                this.log(`[Server] Listening on ${bindHost}:${this.port}...`);
+                this.server.listen(this.port, bindHost, async () => {
                     const interfaces = os.networkInterfaces();
                     const localIp = this.pickBestLocalIp(interfaces);
 
