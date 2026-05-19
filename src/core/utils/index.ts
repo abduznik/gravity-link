@@ -12,7 +12,7 @@ export function hashString(str: string): string {
 }
 
 // Convert vscode-file:// URLs to base64 data URIs
-export function convertVsCodeIcons(html: string): string {
+export function convertLocalIconUrls(html: string): string {
     const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 
     const toMimeType = (ext: string): string => {

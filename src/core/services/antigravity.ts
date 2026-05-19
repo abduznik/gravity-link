@@ -1,5 +1,5 @@
 import { CDPConnection, Snapshot, InjectResult, ClickResult } from '../types';
-import { convertVsCodeIcons } from '../utils';
+import { convertLocalIconUrls } from '../utils';
 import util from 'util';
 
 // Runs in the MAIN world (no contextId) to detect generation state from the outer frame,
@@ -363,8 +363,8 @@ async function captureSnapshotInternal(cdp: CDPConnection): Promise<SnapshotDebu
                 }
 
                 // Convert vscode-file:// icons to base64 in both HTML and CSS
-                snapshot.html = convertVsCodeIcons(snapshot.html);
-                snapshot.css = convertVsCodeIcons(snapshot.css);
+                snapshot.html = convertLocalIconUrls(snapshot.html);
+                snapshot.css = convertLocalIconUrls(snapshot.css);
 
                 // Run generation probe in the MAIN world (no contextId) since the
                 // snapshot frame is a sub-frame that doesn't have the input box.
@@ -420,8 +420,8 @@ async function captureSnapshotInternal(cdp: CDPConnection): Promise<SnapshotDebu
         } else if (result.result?.value) {
             const snapshot = result.result.value as Snapshot;
             if (!snapshot.error) {
-                snapshot.html = convertVsCodeIcons(snapshot.html);
-                snapshot.css = convertVsCodeIcons(snapshot.css);
+                snapshot.html = convertLocalIconUrls(snapshot.html);
+                snapshot.css = convertLocalIconUrls(snapshot.css);
                 return { snapshot, errors, contexts };
             }
             errors.push(`default context: ${stringifyValue(snapshot.error)}`);
